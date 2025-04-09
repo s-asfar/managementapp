@@ -1,0 +1,1021 @@
+/* Body Styles */
+body {
+    background-color: #1d1e1e;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Page Title */
+.page-title {
+    margin: 20px;
+}
+
+/* Navbar */
+.navbar-brand {
+    margin-bottom: 0;
+}
+
+.navbar-nav .nav-item.active .nav-link {
+    color: #FF7B00;
+}
+
+.navbar-nav .nav-item:first-child .nav-link {
+    margin-right: 10px;
+}
+
+.navbar-nav .nav-item .nav-link {
+    margin-right: 10px;
+    padding: 8px 3px;
+    border-radius: 5px;
+    width: fit-content;
+}
+
+.navbar {
+    background-color: #2e2e2f;
+}
+
+/* Titles */
+.bold-orange-title {
+    font-weight: bold;
+    color: #FF7B00;
+}
+
+/* Text */
+.description {
+    max-width: 700px;
+    overflow-wrap: break-word;
+    font-size: 24px;
+    padding-top: 10px;
+}
+
+/* Buttons */
+.custom-btn {
+    background-color: #FF7B00;
+    color: white !important;
+    opacity: 100% !important;
+}
+
+.custom-btn:hover,
+.custom-btn:focus {
+    background-color: rgb(68, 67, 67);
+}
+
+.custom-btn:active {
+    background-color: rgb(207, 114, 1);
+}
+
+/* Footer */
+footer {
+    width: 100%;
+    padding: 20px;
+    background-color: #242425;
+    color: #fff;
+    text-align: center;
+    margin-top: auto;
+}
+
+.index-page footer {
+    position: fixed;
+    bottom: 0;
+}
+
+/* Workout Styles */
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(33%) sepia(40%) saturate(2462%) hue-rotate(8deg) brightness(50%) contrast(101%);
+    cursor: pointer;
+}
+
+input[type="date"]:hover::-webkit-calendar-picker-indicator {
+    filter: invert(33%) sepia(40%) saturate(2462%) hue-rotate(8deg) brightness(100%) contrast(101%);
+}
+
+
+#calendar,
+#date,
+#addWorkoutCalendar {
+    min-width: 50px;
+    height: 34px;
+    text-align: center;
+    font-size: 26px;
+    background: rgba(51, 51, 51, 0.9);
+    color: white;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+    padding: 20px 5px;
+}
+
+
+
+.calendar-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.calendar-sub-container {
+    display: flex;
+    flex-direction: row;
+    width: 60%;
+    height: 10vh;
+    align-items: center;
+    justify-content: center;
+
+}
+
+
+
+.left-arrow,
+.right-arrow {
+    font-size: 45px;
+    color: #FF7B00;
+    opacity: 0.3;
+    cursor: pointer;
+}
+
+.left-arrow:hover,
+.right-arrow:hover {
+    opacity: 1;
+}
+
+.create-workout-btn {
+    background-color: #373736;
+    color: white;
+    font-size: 30px;
+    margin: 20px 0;
+    padding: 0 100px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2), 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.workout {
+    margin-top: 0 !important;
+}
+
+/* Workout Title Container */
+div.container.info-container.workout-title-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 800px;
+    margin: 0 auto;
+    padding-top: 12px;
+    padding-bottom: 5px;
+    position: relative;
+    box-shadow: none;
+    border-radius: 0;
+    margin-bottom: -5px;
+
+}
+
+.delete-workout{
+    position: absolute;
+    right: 10px;
+    bottom: 5px;
+
+}
+
+button.delete-workout{
+    background: transparent;
+    border: none;
+}
+
+
+
+.container.info-container.workout{
+    padding-bottom: 30px;
+}
+
+.workout-name {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 5vh;
+    font-size: 35px;
+}
+
+/* Form Styles */
+.col form div {
+    display: flex;
+}
+
+.col form div input {
+    flex: 1 1 auto;
+    max-width: 100px;
+}
+
+.col form div span,
+.col form div label,
+.col form div input {
+    margin-right: 5px;
+}
+
+.col form div {
+    display: flex;
+    margin-bottom: 3px;
+}
+
+.btn {
+    color: #FF7B00;
+    opacity: 50%;
+    font-size: 30px;
+}
+
+.btn:hover {
+    color: #FF7B00;
+    opacity: 100%;
+    cursor: pointer;
+}
+
+.container {
+    max-width: 60%;
+}
+
+/* Add Input Styles */
+.addInput {
+    background-color: #575757;
+    border: none;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1), 0 3px 10px 0 rgba(0, 0, 0, 0.09);
+}
+
+.addInput.exercise {
+    width: 150px;
+    height: 100px;
+}
+
+.addInput::placeholder {
+    color: white;
+    font-style: italic;
+    opacity: 0.3;
+}
+
+/* Exercise Styles */
+.exercise-name {
+    min-width: 130px;
+    font-size: 22px;
+}
+
+.exercise-name:focus {
+    font-size: 20px;
+}
+
+.exercise {
+    width: 10vw;
+    height: 3vh;
+}
+
+/* Workout Submit Button Container */
+.workout-submit-button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 0;
+}
+
+
+
+.set-span{
+    margin-right: 15px;
+}
+
+
+/* Add Workout Styles */
+.addworkout {
+    margin-top: 5vh !important;
+    margin-bottom: 2px !important;
+}
+
+/* Preview Set Styles */
+.preview-set {
+    opacity: 0.2;
+}
+
+/* Exercise Title Styles */
+.exercise-title {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Close Button Styles */
+.bi.bi-x-square-fill {
+    font-size: xx-large;
+    color: #FF7B00;
+    opacity: 50%;
+    cursor: pointer;
+}
+
+.bi.bi-x-square-fill:hover {
+    opacity: 100%;
+    cursor: pointer;
+}
+
+/* Set Container Styles */
+.addInput.set:last-child {
+    vertical-align: middle;
+}
+
+/* Minus Button Styles */
+.w-minus {
+    background-color: #2e2e2f;
+    border: none;
+    margin: 0;
+}
+
+/* Plus Button Styles */
+.w-plus {
+    background-color: #2e2e2f;
+    border: none;
+}
+
+/* Dash and Plus Circle Styles */
+.bi-dash-circle-dotted {
+    color: #FF7B00;
+}
+
+.bi-plus-circle-dotted {
+    color: #FF7B00;
+}
+
+/* Preview Set Styles */
+.preview-set span:last-child {
+    opacity: 1 !important;
+}
+
+/* Hidden Styles */
+.hidden {
+    display: none;
+}
+
+/* Parent Container Styles */
+.parent-container.addworkout {
+    min-height: 0 !important;
+    width: fit-content;
+}
+
+/* Set Container Input Styles */
+.set-container input,
+.preview-set input {
+    width: 120px;
+}
+
+.set-container {
+    width: fit-content;
+    margin: 0 auto;
+}
+
+/* Parent Container Styles */
+.parent-container {
+    display: flex;
+    flex-direction: column;
+    min-width: 500px;
+    min-height: 200px;
+    position: relative;
+}
+
+/* Info Container Styles */
+.info-container {
+    background-color: #2e2e2f;
+    margin: 15px auto;
+    min-width: 800px;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    white-space: nowrap;
+}
+
+/* Horizontal Rule Styles */
+.container hr {
+    border-width: 2px;
+}
+
+/* Info Container Title Styles */
+.info-container-title {
+    padding: 10px 0 0 0;
+    font-size: 27px;
+}
+
+
+
+/* Servings and Calories Styles */
+#servings,
+#calories {
+    color: #aaa;
+}
+
+hr {
+    border-color: #39393b;
+}
+
+/* Add Food Button Styles */
+.info-container .add-food-btn {
+    font-size: 22px;
+    padding: 0;
+    margin-bottom: 10px;
+}
+
+/* Search Bar Container Styles */
+.search-bar-container {
+    width: 50%;
+    margin: 10px auto;
+    display: flex;
+    justify-content: center;
+}
+
+/* Food Link Styles */
+a.food-link {
+    display: block;
+    text-decoration: none;
+    width: fit-content;
+}
+
+/* Signin Container Styles */
+.signin-container {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.alert {
+    max-width: 550px;
+    margin: 0 auto;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 20px;
+}
+
+.alert-success {
+    text-align: center;
+    background-color: #dff0d8;
+    color: #3c763d;
+    border: 1px solid #d6e9c6;
+}
+
+.alert-danger {
+    max-width: 550px;
+    text-align: center;
+    background-color: #f2dede;
+    color: #a94442;
+    border: 1px solid #ebccd1;
+}
+
+/* Signin Card Styles */
+.signin-card {
+    background-color: #2e2e2f;
+    color: white;
+}
+
+/* Signin Card Header Styles */
+.signin-card-header {
+    background-color: #FF7B00;
+}
+
+/* Signin Form Label Styles */
+.signin-form-label {
+    color: white;
+}
+
+/* Signin Form Control Styles */
+.signin-form-control {
+    background-color: #39393b;
+    color: white;
+}
+
+/* Signin Button Styles */
+.signin-btn {
+    background-color: #FF7B00;
+    border-color: #FF7B00;
+    color: white;
+}
+
+.signin-btn:hover,
+.signin-btn:focus {
+    background-color: #f06d0f;
+    border-color: #d95c00;
+    color: white !important;
+}
+
+/* Profile Container Styles */
+.profile-container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Profile Card Styles */
+.profile-card {
+    background-color: #2e2e2f;
+    color: white;
+}
+
+/* Profile Card Header Styles */
+.profile-card-header {
+    background-color: #FF7B00;
+}
+
+/* Profile Card Title Styles */
+.profile-card-title {
+    color: #FF7B00;
+}
+
+/* Profile Card Text Styles */
+.profile-card-text {
+    color: white;
+}
+
+/* Profile Button Styles */
+.profile-btn {
+    background-color: #FF7B00;
+    border-color: #FF7B00;
+    color: white;
+}
+
+/* Card Divider Styles */
+.card-divider {
+    border-bottom: 2px solid #444;
+    margin-bottom: 20px;
+}
+
+/* Trainor Styles */
+.trainor {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px;
+}
+
+/* Logout Button Styles */
+.logout-btn {
+    background-color: #d10404b4;
+    color: white;
+    opacity: 50%;
+}
+
+.logout-nav {
+    background-color: #d1040469;
+    color: white;
+    opacity: 90%;
+}
+
+.logout-nav:hover {
+    background-color: #d10404d8;
+    color: white;
+    opacity: 100%;
+}
+
+.logout-btn:hover {
+    background-color: #d10404;
+    opacity: 100%;
+    color: white;
+}
+
+/* Chat Box Styles */
+#chatBox {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 80vh;
+}
+
+/* Chat Input Form Styles */
+form#chatInput {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.info-container {
+    background-color: #2e2e2f;
+    margin: 15px auto;
+    min-width: 800px;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    white-space: nowrap;
+}
+
+.container hr {
+    border-width: 2px;
+}
+
+/* Servings and Calories Styles */
+#servings,
+#calories {
+    background-color: #2e2e2f;
+    color: white;
+    border: none;
+    outline: none;
+}
+
+/* Parent Container Styles */
+.parent-container {
+    justify-content: center;
+    background-color: #242425;
+    margin: 20px auto;
+    padding: 40px;
+    width: fit-content;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Top Container Styles */
+.top-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+/* Nutrition Label Styles */
+.nutrition-label {
+    flex-grow: 1;
+    margin-right: 10px;
+    width: 300px;
+}
+
+/* Black Rectangle Styles */
+.black-rectangle {
+    background-color: black;
+    color: white;
+}
+
+/* Bottom Container Styles */
+.bottom-container {
+    flex-grow: 1;
+    margin-top: 20px;
+}
+
+/* Nutrition Facts Styles */
+.nutrition-facts {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Nutrition Item Styles */
+.nutrition-item {
+    border-bottom: 1px solid #444444;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+/* Create Food Button Styles */
+.create-food-btn {
+    margin: 30px auto;
+    text-align: center;
+}
+
+.create-food-form,
+.add-food-form {
+    margin: 15px auto;
+    text-align: center;
+}
+
+/* Servings Box and Add Food Button Styles */
+.servings-box .add-food-btn {
+    margin-top: 100px;
+}
+
+/* Nutrition Value Styles */
+.nutrition-value {
+    text-align: right;
+    width: 100px;
+}
+
+/* Serving Size Styles */
+.serving-size {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 30px;
+    font-weight: bold;
+}
+
+/* Search Results Container Styles */
+.search-results-container {
+    background-color: #2e2e2f;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px;
+    margin: 5px auto;
+    border-radius: 4px;
+    width: 600px;
+    min-width: 40%;
+    transition: transform 0.17s ease-in-out;
+}
+
+
+.search-results-container:hover {
+    transform: scale(1.05);
+    background-color: rgba(255, 123, 0, 0.626);
+}
+
+.search-result-link {
+    text-decoration: none;
+    display: block;
+    width: 100%;
+    height: 100%;
+    color: inherit;
+}
+
+.search-result-link:hover {
+    text-decoration: none;
+
+    color: inherit;
+}
+
+.search-bar-container {
+    width: 50%;
+    margin: 10px auto;
+    display: flex;
+    justify-content: center;
+}
+
+a.food-link {
+    display: block;
+    text-decoration: none;
+    width: fit-content;
+}
+
+.search-bar {
+    flex-grow: 1;
+    margin-right: 10px;
+    background-color: #2e2e2f;
+    border: none;
+    outline: none;
+    color: #fff;
+    border-radius: 4px;
+    height: 45px;
+}
+
+.servings-box {
+    padding-left: 90px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+}
+
+/* Food Name Styles */
+.food-name {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+/* Food Calories Styles */
+.food-calories {
+    font-size: 20px;
+    color: #aaa;
+}
+
+/* Food Nutrition Styles */
+.food-nutrition {
+    font-size: 18px;
+}
+
+/* Food Info Styles */
+.food-info {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Food Info Container Styles */
+.food-info-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+/* My Foods Button Styles */
+.my-foods-btn {
+    margin-top: 20px;
+}
+
+/* Submit Button Styles */
+.submit-btn {
+    margin-top: 60px;
+    bottom: 0;
+}
+
+/* Page Title Styles */
+.page-title {
+    font-size: 2em;
+    margin-bottom: 10px;
+}
+
+/* Page Description Styles */
+.page-description {
+    margin: 0px 20px;
+    font-size: 1.2em;
+    margin-bottom: 20px;
+    width: 1000px;
+}
+
+/* Button Container Styles */
+.button-container {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+}
+
+/* Submit Button Styles */
+.submit-btn {
+    margin: 0 auto;
+}
+
+/* Create Food Container Styles */
+#create-food-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+/* Input Container Styles */
+.input-container {
+    display: flex;
+    align-items: center;
+    width: 50vw;
+    height: 100%;
+    box-sizing: border-box;
+    margin: 5px 10px;
+}
+
+/* Food Input Label Styles */
+.food-input-label {
+    width: 100px;
+    text-align: left;
+    font-size: 22px;
+}
+
+/* Input Styles */
+.input-container input[type="text"] {
+    margin: 10px auto;
+    background-color: #39393b;
+    width: 300px;
+    height: 30px;
+    font-size: 18px;
+    border: none;
+    outline: none;
+    padding: 0;
+    border-radius: 2px;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    color: #fff;
+    padding: 0 10px;
+}
+
+/* alert Styles */
+.danger-alert {
+    margin: 10px auto;
+    margin-top: 40px;
+    padding: 10px 0;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    background-color: #f2dede;
+    color: #ffffff;
+    background-color: #a93634;
+    border-radius: 5px;
+    max-width: 550px;
+}
+
+.success-alert {
+    margin: 10px auto;
+    margin-top: 40px;
+    padding: 10px 0;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    background-color: #f2dede;
+    color: #ffffff;
+    background-color: #1e7513;
+    border-radius: 5px;
+    max-width: 550px;
+}
+
+/* User Info Title */
+.user-info-title {
+    color: #FF7B00;
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+/* User Info Text */
+.user-info-text {
+    color: white;
+    font-size: 18px;
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+/* Fitness Stats Title */
+.fitness-stats-title {
+    color: #FF7B00;
+    font-size: 20px;
+    margin-top: 30px;
+    margin-bottom: 10px;
+}
+
+/* Fitness Stats Text */
+.fitness-stats-text {
+    color: white;
+    font-size: 18px;
+    margin-bottom: 10px;
+    text-align: left;
+}
+
+
+/* Comment Section Styles */
+.comment-section {
+    margin-top: 20px;
+}
+
+.comment-form {
+    margin-bottom: 20px;
+}
+
+.comment-form textarea {
+    width: 100%;
+    height: 100px;
+    resize: vertical;
+    padding: 5px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+.comment-form button {
+    background-color: #FF7B00;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.comment-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.comment {
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: #f5f5f5;
+    border-radius: 4px;
+}
+
+.comment .comment-author {
+    font-weight: bold;
+}
+
+.comment .comment-date {
+    font-size: 12px;
+    color: #888;
+}
+
+.comment .comment-content {
+    margin-top: 5px;
+}
+
+.comment-submit {
+    max-width: 190px;
+    max-height: 75px;
+}
+
+.edit-btn {
+    font-size: 18px; /* Decreased font size */
+    padding: 6px 12px; /* Decreased padding */
+}
+
+
+
+.comments-form > p {
+    margin: 0;
+    color: black;
+}
+
+.delete-button{
+    background-color: #FF7B00;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: 600px;
+}
+
+.edit-button{
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: 610px;
+    margin-bottom: 10px;
+}
+
+.comment-username{
+    font-size: 20px;
+    color: #3b3b3b;
+}

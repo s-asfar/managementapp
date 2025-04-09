@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TRAINFIT</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <link rel="icon" href="/static/images/favicon-16x16.png" sizes="16x16" type="image/png">
+    <link rel="icon" href="/static/images/favicon-32x32.png" sizes="16x16" type="image/png">
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <h1 class="navbar-brand">TRAIN<span style="color:#FF7B00;">FIT</span></h1>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item {% if active_page == 'home' %}active{% endif %}">
+                    <a class="nav-link" href="/">Home</a>
+                </li>
+                <li class="nav-item {% if active_page == 'nutrition' %}active{% endif %}">
+                    <a class="nav-link" href="/nutrition">Nutrition</a>
+                </li>
+                <li class="nav-item {% if active_page == 'workout' %}active{% endif %}">
+                    <a class="nav-link" href="/workout">Workout</a>
+                </li>
+                {% if 'userID' in session %}
+                <li class="nav-item {% if active_page == 'profile' %}active{% endif %}">
+                    <a class="nav-link" href="/profile">Profile</a>
+                </li>
+                {% endif %}
+            </ul>
+            <ul class="navbar-nav ml-auto">
+                {% if 'userID' not in session %}
+                <li class="nav-item {% if active_page == 'signin' %}active{% endif %}">
+                    <a class="nav-link" href="/signin" style="border: none;">Sign In</a>
+                </li>
+                <li class="nav-item {% if active_page == 'signup' %}active{% endif %}">
+                    <a class="nav-link" href="/signup" style="border: 1px solid white;">Sign Up</a>
+                </li>
+                {% endif %}
+                {% if 'userID' in session %}
+                <li class="nav-item">
+                    <a class="nav-link logout-nav" href="/logout" style="border: 1px solid white;">Logout</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                {% for category, message in messages %}
+                <div class="{{ category }}-alert">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+    <footer>
+        <span class="text-muted">© 2024 TRAINFIT. All rights reserved.</span>
+    </footer>
+
+
+    <script src="{{ url_for('static', filename='javascript/script.js') }}"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.11"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,27 @@
+{% extends "_layout.html" %}
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <div class="card signin-card">
+                <div class="card-header signin-card-header">
+                    <h3 class="text-center">Register For Free</h3>
+                </div>
+                <div class="card-body">
+                    <form action="/signup" method="post">
+                        <div class="form-group">
+                            <label class="signin-form-label" for="email">Email Address</label>
+                            <input type="email" class="form-control signin-form-control" id="email" name="email" placeholder="Enter email">
+                        </div>
+                        <div class="form-group">
+                            <label class="signin-form-label" for="password">Password</label>
+                            <input type="password" class="form-control signin-form-control" id="password" name="password" placeholder="Enter Password">
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block signin-btn">Sign Up</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
