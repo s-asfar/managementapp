@@ -4,9 +4,7 @@ from flask import Flask, g, render_template, redirect, request, url_for, session
 from flask_bcrypt import Bcrypt
 from datetime import date as dt
 
-from repositories import user_repository, workout_repo, food_repo
-from repositories.food_repo import *
-from repositories.workout_repo import *
+from repositories import user_repository
 from repositories.user_repository import *
 from datetime import date
 
