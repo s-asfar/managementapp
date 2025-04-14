@@ -5,7 +5,4 @@ CREATE TABLE Users (
     password VARCHAR(255),
     name VARCHAR(255),
     age INT,
-    height VARCHAR(10),
-    weight INT,
-    goal VARCHAR(50)
 );

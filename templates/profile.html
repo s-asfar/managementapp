@@ -13,51 +13,10 @@
                     <div class="user-info">
                         <h4 class="user-info-title">User Info</h4>
                         <p class="user-info-text">Age: <span class="user-info-age">{{ user.age }}</span></p>
-                        <p class="user-info-text">Height: <span class="user-info-height">{{ user.height }}</span></p>
-                        <p class="user-info-text">Weight: <span class="user-info-weight">{{ user.weight }}</span></p>
-                        <p class="user-info-text">Goal: <span class="user-info-goal">{{ user.goal }}</span></p>
                     </div>
                     <div class="card-divider"></div>
-                    <h5 class="fitness-stats-title">Fitness Stats</h5>
-                    <p class="fitness-stats-text">Created Foods: <span class="fitness-stats-created">{{ user.created_foods_count }}</span></p>
-                    <p class="fitness-stats-text" style="margin-bottom: 20px;">Workouts Added: <span class="fitness-stats-workouts">{{ user.workouts_count }}</span></p>
                     <a href="{{ url_for('edit_profile') }}" class="btn btn-block signin-btn">Edit Profile</a>
                     <a href="{{ url_for('logout') }}" class="btn btn-danger btn-block logout-btn">Log Out</a>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Created Foods Section -->
-    <div class="row mt-4">
-        <div class="col-md-6 offset-md-3">
-            <div class="card signin-card">
-                <div class="card-header signin-card-header">
-                    <h3 class="text-center">Created Foods</h3>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th class="user-info-title">Name</th>
-                                    <th class="user-info-title">Calories</th>
-                                    <th class="user-info-title">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for food in created_foods %}
-                                <tr>
-                                    <td>{{ food.name }}</td>
-                                    <td>{{ food.calories }}</td>
-                                    <td>
-                                        <a href="{{ url_for('edit_food', food_id=food.id) }}" class="btn btn-primary btn-sm">Edit</a>
-                                        <a href="{{ url_for('delete_food', food_id=food.id) }}" class="btn btn-danger btn-sm">Delete</a>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
                 </div>
             </div>
         </div>

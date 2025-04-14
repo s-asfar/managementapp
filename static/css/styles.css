@@ -18,7 +18,7 @@ body {
 }
 
 .navbar-nav .nav-item.active .nav-link {
-    color: #FF7B00;
+    color: #5533dcb8;
 }
 
 .navbar-nav .nav-item:first-child .nav-link {
@@ -39,7 +39,7 @@ body {
 /* Titles */
 .bold-orange-title {
     font-weight: bold;
-    color: #FF7B00;
+    color: #5533dcb8;
 }
 
 /* Text */
@@ -52,7 +52,7 @@ body {
 
 /* Buttons */
 .custom-btn {
-    background-color: #FF7B00;
+    background-color: #5533dcb8;
     color: white !important;
     opacity: 100% !important;
 }
@@ -63,7 +63,7 @@ body {
 }
 
 .custom-btn:active {
-    background-color: rgb(207, 114, 1);
+    background-color: rgb(56, 1, 207);
 }
 
 /* Footer */
@@ -131,7 +131,7 @@ input[type="date"]:hover::-webkit-calendar-picker-indicator {
 .left-arrow,
 .right-arrow {
     font-size: 45px;
-    color: #FF7B00;
+    color: #5533dcb8;
     opacity: 0.3;
     cursor: pointer;
 }
@@ -218,13 +218,13 @@ button.delete-workout{
 }
 
 .btn {
-    color: #FF7B00;
+    color: #5533dcb8;
     opacity: 50%;
     font-size: 30px;
 }
 
 .btn:hover {
-    color: #FF7B00;
+    color: #5533dcb8;
     opacity: 100%;
     cursor: pointer;
 }
@@ -302,7 +302,7 @@ button.delete-workout{
 /* Close Button Styles */
 .bi.bi-x-square-fill {
     font-size: xx-large;
-    color: #FF7B00;
+    color: #5533dcb8;
     opacity: 50%;
     cursor: pointer;
 }
@@ -332,11 +332,11 @@ button.delete-workout{
 
 /* Dash and Plus Circle Styles */
 .bi-dash-circle-dotted {
-    color: #FF7B00;
+    color: #5533dcb8;
 }
 
 .bi-plus-circle-dotted {
-    color: #FF7B00;
+    color: #5533dcb8;
 }
 
 /* Preview Set Styles */
@@ -469,7 +469,7 @@ a.food-link {
 
 /* Signin Card Header Styles */
 .signin-card-header {
-    background-color: #FF7B00;
+    background-color: #5533dcb8;
 }
 
 /* Signin Form Label Styles */
@@ -485,8 +485,8 @@ a.food-link {
 
 /* Signin Button Styles */
 .signin-btn {
-    background-color: #FF7B00;
-    border-color: #FF7B00;
+    background-color: #5533dcb8;
+    border-color: #5533dcb8;
     color: white;
 }
 
@@ -511,12 +511,12 @@ a.food-link {
 
 /* Profile Card Header Styles */
 .profile-card-header {
-    background-color: #FF7B00;
+    background-color: #5533dcb8;
 }
 
 /* Profile Card Title Styles */
 .profile-card-title {
-    color: #FF7B00;
+    color: #5533dcb8;
 }
 
 /* Profile Card Text Styles */
@@ -526,8 +526,8 @@ a.food-link {
 
 /* Profile Button Styles */
 .profile-btn {
-    background-color: #FF7B00;
-    border-color: #FF7B00;
+    background-color: #5533dcb8;
+    border-color: #5533dcb8;
     color: white;
 }
 
@@ -897,7 +897,7 @@ a.food-link {
 
 /* User Info Title */
 .user-info-title {
-    color: #FF7B00;
+    color: #5533dcb8;
     font-size: 20px;
     margin-bottom: 10px;
 }
@@ -912,7 +912,7 @@ a.food-link {
 
 /* Fitness Stats Title */
 .fitness-stats-title {
-    color: #FF7B00;
+    color: #5533dcb8;
     font-size: 20px;
     margin-top: 30px;
     margin-bottom: 10px;
@@ -946,7 +946,7 @@ a.food-link {
 }
 
 .comment-form button {
-    background-color: #FF7B00;
+    background-color: #5533dcb8;
     color: white;
     border: none;
     padding: 8px 16px;
@@ -997,7 +997,7 @@ a.food-link {
 }
 
 .delete-button{
-    background-color: #FF7B00;
+    background-color: #5533dcb8;
     color: white;
     border: none;
     border-radius: 4px;
