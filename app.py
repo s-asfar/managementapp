@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 from flask import Flask, g, render_template, redirect, request, url_for, session, abort, flash
 from flask_bcrypt import Bcrypt
-from datetime import date as dt
+from datetime import datetime
 
 from repositories import user_repository
 from repositories.user_repository import *
@@ -14,13 +14,24 @@ app = Flask(__name__)
 bcrypt = Bcrypt(app)
 app.secret_key = os.getenv('APP_SECRET_KEY')
 
-#index
+# Helper function to check user role
+def require_role(role):
+    if 'userID' not in session:
+        flash('You must be signed in to access this page.', 'danger')
+        return redirect(url_for('signin'))
+    
+    user = user_repository.get_user_by_id(session['userID'])
+    if not user or user.get('role') != role:
+        flash('You do not have permission to access this page.', 'danger')
+        return redirect(url_for('index'))
+    return None
+
+# index
 @app.get('/')
 def index():
-    userID = session.get('userID')
     return render_template('index.html', active_page='home')
 
-#user get
+# Authentication Routes
 @app.get('/signin')
 def signin():
     if 'userID' in session:
@@ -60,8 +71,7 @@ def edit_profile():
     user = user_repository.get_user_by_id(userID)
     return render_template('editprofile.html', user=user, active_page='profile')
 
-
-#user post
+# Authentication POST routes
 @app.post('/signup')
 def signup_account():
     if 'userID' in session:
@@ -70,8 +80,15 @@ def signup_account():
     
     email = request.form.get('email').lower()
     password = request.form.get('password')
+    role = request.form.get('role', 'student')  # Default to student role
+    
     if not email or not password:
         flash('Email and password are required.', 'danger')
+        return redirect(url_for('signup'))
+    
+    # Validate role
+    if role not in ['student', 'officer', 'admin']:
+        flash('Invalid role selection.', 'danger')
         return redirect(url_for('signup'))
     
     does_user_exist = user_repository.does_email_exist(email)
@@ -80,7 +97,7 @@ def signup_account():
         return redirect(url_for('signup'))
     
     hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
-    user_repository.create_user(email, hashed_password)
+    user_repository.create_user(email, hashed_password, role)
     user = user_repository.get_user_by_email(email)
     session['userID'] = user['userID']
     flash('Account created successfully!', 'success')
@@ -107,20 +124,61 @@ def update_profile():
     if 'userID' not in session:
         flash('You must be signed in to edit your profile.', 'danger')
         return redirect('/')
+    
     userID = session.get('userID')
     name = request.form.get('name')
-    age = request.form.get('age')
-    height = request.form.get('height')
-    weight = request.form.get('weight')
-    goal = request.form.get('goal')
-    if not name or not age or not height or not weight or not goal:
-        flash('All fields are required.', 'danger')
+    phone = request.form.get('phone')
+    address = request.form.get('address')
+    
+    if not name:
+        flash('Name is required.', 'danger')
         return render_template('editprofile.html', user=user_repository.get_user_by_id(userID), active_page='profile')
-    updated_user = user_repository.update_user(userID, name, age, height, weight, goal)
+    
+    updated_user = user_repository.update_user(userID, name, phone, address)
     if updated_user is None:
         flash('An error occurred while updating the profile.', 'danger')
         return redirect(url_for('profile'))
+    
     user_data = user_repository.get_user_profile_data(userID)
     flash('Profile updated successfully!', 'success')
     return render_template('profile.html', user=user_data, active_page='profile')
+
+# Student Routes
+@app.get('/apply')
+def apply_form():
+    if 'userID' not in session:
+        flash('You must be signed in to apply.', 'danger')
+        return redirect(url_for('signin'))
+    
+    # Check if user already has an application
+    userID = session.get('userID')
+    # This would check if the user already has an application in the database
+    # For now, just render the application form
+    
+    return render_template('apply.html', active_page='apply')
+
+@app.post('/apply')
+def submit_application():
+    if 'userID' not in session:
+        flash('You must be signed in to apply.', 'danger')
+        return redirect(url_for('signin'))
+    
+    userID = session.get('userID')
+    program = request.form.get('program')
+    
+    if not program:
+        flash('Program selection is required.', 'danger')
+        return redirect(url_for('apply_form'))
+    
+    # This would create an application in the database
+    # For now, just show a success message
+    
+    flash('Application submitted successfully!', 'success')
+    return redirect(url_for('application_status'))
+
+@app.get('/application-status')
+def application_status():
+    if 'userID' not in session:
+        flash('You must be signed in to view application status.', 'danger')
+        return
 

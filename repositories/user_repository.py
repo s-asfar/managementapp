@@ -18,17 +18,17 @@ def does_email_exist(email: str) -> bool:
             userID = cur.fetchone()
             return userID is not None
 
-def create_user(email: str, password: str) -> dict[str, Any]:
+def create_user(email: str, password: str, role: str = 'student') -> dict[str, Any]:
     user_id = str(uuid.uuid4())
     pool = get_pool()
     with pool.connection() as conn:
         with conn.cursor() as cur:
             cur.execute('''
-                        INSERT INTO users (userID, email, password)
-                        VALUES (%s, %s, %s)
+                        INSERT INTO users (userID, email, password, role)
+                        VALUES (%s, %s, %s, %s)
                         RETURNING userID
-                        ''', [user_id, email, password])
-            return {'userID': user_id, 'email': email}
+                        ''', [user_id, email, password, role])
+            return {'userID': user_id, 'email': email, 'role': role}
 
 
 def get_user_by_email(email: str) -> dict[str, Any] | None:
@@ -39,14 +39,20 @@ def get_user_by_email(email: str) -> dict[str, Any] | None:
                         SELECT
                             userid,
                             email,
-                            password AS hashed_password
+                            password AS hashed_password,
+                            role
                         FROM
                             users
                         WHERE email = %s
                         ''', [email])
             user = cur.fetchone()
             if user:
-                return {'userID': user.get('userid'), 'email': user.get('email'), 'hashed_password': user.get('hashed_password')}
+                return {
+                    'userID': user.get('userid'),
+                    'email': user.get('email'),
+                    'hashed_password': user.get('hashed_password'),
+                    'role': user.get('role')
+                }
             return None
 
 
@@ -59,10 +65,10 @@ def get_user_by_id(userID: uuid.UUID) -> dict[str, Any] | None:
                             userID,
                             email,
                             name,
-                            age,
-                            height,
-                            weight,
-                            goal
+                            role,
+                            phone,
+                            address,
+                            date_created
                         FROM
                             users
                         WHERE userID = %s
@@ -70,18 +76,16 @@ def get_user_by_id(userID: uuid.UUID) -> dict[str, Any] | None:
             user = cur.fetchone()
             return user
 
-def update_user(userID: uuid.UUID, name: str, age: int, height: str, weight: float, goal: str) -> dict[str, Any] | None:
+def update_user(userID: uuid.UUID, name: str, phone: str = None, address: str = None) -> dict[str, Any] | None:
     pool = get_pool()
     with pool.connection() as conn:
         with conn.cursor(row_factory=dict_row) as cur:
             cur.execute('''
                 UPDATE users
-                SET name = %s, age = %s, height = %s, weight = %s, goal = %s
+                SET name = %s, phone = %s, address = %s
                 WHERE userID = %s
-                RETURNING userID, email, name, age, height, weight, goal,
-                    (SELECT COUNT(*) FROM Food WHERE createdByID = userID) AS created_foods_count,
-                    (SELECT COUNT(*) FROM Workout WHERE userID = userID) AS workouts_count
-            ''', (name, age, height, weight, goal, userID))
+                RETURNING userID, email, name, role, phone, address, date_created
+            ''', (name, phone, address, userID))
             updated_user = cur.fetchone()
             return updated_user
 
@@ -94,12 +98,11 @@ def get_user_profile_data(userID: uuid.UUID) -> dict[str, Any] | None:
                             u.userID,
                             u.email,
                             u.name,
-                            u.age,
-                            u.height,
-                            u.weight,
-                            u.goal,
-                            (SELECT COUNT(*) FROM Food WHERE createdByID = u.userID) AS created_foods_count,
-                            (SELECT COUNT(*) FROM Workout WHERE userID = u.userID) AS workouts_count
+                            u.role,
+                            u.phone,
+                            u.address,
+                            u.date_created,
+                            (SELECT COUNT(*) FROM Applications WHERE userID = u.userID) AS applications_count
                         FROM
                             users u
                         WHERE u.userID = %s

@@ -1,22 +1,108 @@
 {% extends "_layout.html" %}
 
 {% block content %}
-
 <body class="index-page">
-<div>
-    <div class="p-4">
-        <h1 class="display-2 fw-bold bold-orange-title">Welcome To <span class="white-title">Admissions
-        </span></h1>
-        <p class="lead fs-4 description"> 
-            Our <span style="color:#4011ffec;">mission</span> is to streamline and automate the admissions process for educational
-            institutions. This secure, web-based application allows applicants to register, complete
-            application forms, and upload required documents online. Admissions officers and
-            administrative staff can efficiently review and process applications, reducing delays,
-            administrative workload, and potential errors in data entry.
-        </p>
-        {% if 'userID' not in session %}    
-        Sign up to get started!</p>
-        {% endif %}
+    <div>
+        <div class="p-4">
+            <h1 class="display-2 fw-bold bold-orange-title">Welcome To <span class="white-title">Admissions</span></h1>
+            <p class="lead fs-4 description"> 
+                Our <span style="color:#4011ffec;">mission</span> is to streamline and automate the admissions process for educational
+                institutions. This secure, web-based application allows applicants to register, complete
+                application forms, and upload required documents online. Admissions officers and
+                administrative staff can efficiently review and process applications, reducing delays,
+                administrative workload, and potential errors in data entry.
+            </p>
+            
+            <div class="features-section mt-5">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="feature-card">
+                            <h3><i class="bi bi-person-badge"></i> For Students</h3>
+                            <ul>
+                                <li>Create an account</li>
+                                <li>Fill out application forms</li>
+                                <li>Upload academic records</li>
+                                <li>Track application status</li>
+                            </ul>
+                            {% if 'userID' not in session %}
+                            <a href="/signup" class="btn signin-btn btn-sm">Apply Now</a>
+                            {% else %}
+                            <a href="/apply" class="btn signin-btn btn-sm">Start Application</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="feature-card">
+                            <h3><i class="bi bi-briefcase"></i> For Officers</h3>
+                            <ul>
+                                <li>Review applications</li>
+                                <li>Update application status</li>
+                                <li>Schedule interviews</li>
+                                <li>Provide feedback</li>
+                            </ul>
+                            {% if 'userID' not in session %}
+                            <a href="/signin" class="btn signin-btn btn-sm">Officer Login</a>
+                            {% else %}
+                            <a href="/officer-dashboard" class="btn signin-btn btn-sm">Go to Dashboard</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="feature-card">
+                            <h3><i class="bi bi-graph-up"></i> For Administrators</h3>
+                            <ul>
+                                <li>Generate reports</li>
+                                <li>Monitor application statistics</li>
+                                <li>Manage interview schedules</li>
+                                <li>Send automated emails</li>
+                            </ul>
+                            {% if 'userID' not in session %}
+                            <a href="/signin" class="btn signin-btn btn-sm">Admin Login</a>
+                            {% else %}
+                            <a href="/admin-dashboard" class="btn signin-btn btn-sm">Admin Panel</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            {% if 'userID' not in session %}
+            <div class="text-center mt-5">
+                <a href="/signup" class="btn signin-btn btn-lg">Sign Up to Get Started!</a>
+            </div>
+            {% endif %}
+        </div>
     </div>
 </body>
-    {% endblock %}
+
+<style>
+.feature-card {
+    background-color: #2e2e2f;
+    padding: 20px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    height: 100%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.feature-card h3 {
+    color: #5533dcb8;
+    margin-bottom: 15px;
+}
+
+.feature-card ul {
+    padding-left: 20px;
+    margin-bottom: 20px;
+}
+
+.feature-card li {
+    margin-bottom: 5px;
+}
+
+.features-section {
+    margin-bottom: 50px;
+}
+</style>
+{% endblock %}

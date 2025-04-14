@@ -74,6 +74,18 @@ footer {
     color: #fff;
     text-align: center;
     margin-top: auto;
+    position: relative; /* Change from fixed to relative as the default */
+}
+
+/* Only apply fixed positioning on the index page */
+body.index-page footer {
+    position: fixed;
+    bottom: 0;
+}
+
+/* Add bottom padding to main content area to prevent footer overlap */
+main {
+    padding-bottom: 80px; /* Adjust based on your footer height */
 }
 
 .index-page footer {
@@ -492,8 +504,8 @@ a.food-link {
 
 .signin-btn:hover,
 .signin-btn:focus {
-    background-color: #f06d0f;
-    border-color: #d95c00;
+    background-color: #3911fd;
+    border-color: #3911fd;
     color: white !important;
 }
 

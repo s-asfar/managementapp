@@ -9,24 +9,16 @@
             <div class="card-body">
                 <form action="/editprofile" method="POST">
                     <div class="form-group">
-                        <label for="name" class="signin-form-label">Name:</label>
-                        <input type="name" class="form-control signin-form-control" id="name" name="name" placeholder="Enter name" value="{{ user.name }}">
+                        <label for="name" class="signin-form-label">Full Name:</label>
+                        <input type="text" class="form-control signin-form-control" id="name" name="name" placeholder="Enter your full name" value="{{ user.name }}">
                     </div>
                     <div class="form-group">
-                        <label for="age" class="signin-form-label">Age:</label>
-                        <input type="number" class="form-control signin-form-control" id="age" name="age" placeholder="Enter age" value="{{ user.age }}">
+                        <label for="phone" class="signin-form-label">Phone Number:</label>
+                        <input type="text" class="form-control signin-form-control" id="phone" name="phone" placeholder="Enter phone number" value="{{ user.phone }}">
                     </div>
                     <div class="form-group">
-                        <label for="height" class="signin-form-label">Height:</label>
-                        <input type="text" class="form-control signin-form-control" id="height" name="height" placeholder="Enter height" value="{{ user.height }}">
-                    </div>
-                    <div class="form-group">
-                        <label for="weight" class="signin-form-label">Weight:</label>
-                        <input type="text" class="form-control signin-form-control" id="weight" name="weight" placeholder="Enter weight" value="{{ user.weight }}">
-                    </div>
-                    <div class="form-group">
-                        <label for="goal" class="signin-form-label">Goal:</label>
-                        <input type="text" class="form-control signin-form-control" id="goal" name="goal" placeholder="Enter goal" value="{{ user.goal }}">
+                        <label for="address" class="signin-form-label">Address:</label>
+                        <textarea class="form-control signin-form-control" id="address" name="address" placeholder="Enter your address" rows="3">{{ user.address }}</textarea>
                     </div>
                     <button type="submit" class="btn btn-block signin-btn">Update Profile</button>
                 </form>

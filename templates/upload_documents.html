@@ -1,0 +1,78 @@
+{% extends "_layout.html" %}
+{% block content %}
+<div class="container mt-5">
+    <div class="col-md-8 offset-md-2">
+        <div class="card signin-card">
+            <div class="card-header signin-card-header">
+                <h3 class="text-center">Upload Documents</h3>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <p>Please upload the following required documents to support your application:</p>
+                    <ul>
+                        <li>Official transcripts</li>
+                        <li>Identification (passport or government ID)</li>
+                        <li>Letters of recommendation (at least 2)</li>
+                        <li>Resume/CV</li>
+                    </ul>
+                </div>
+                
+                <div class="uploaded-documents">
+                    <h4>Uploaded Documents</h4>
+                    <table class="table table-dark">
+                        <thead>
+                            <tr>
+                                <th>Document Name</th>
+                                <th>Type</th>
+                                <th>Upload Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- This would be populated from the database -->
+                            <tr>
+                                <td>Transcript.pdf</td>
+                                <td>Academic Records</td>
+                                <td>2025-04-10</td>
+                                <td>
+                                    <button class="btn btn-sm btn-danger">Delete</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="card-divider"></div>
+                
+                <h4>Upload New Document</h4>
+                <form action="/upload-documents" method="POST" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="document_name" class="signin-form-label">Document Name:</label>
+                        <input type="text" class="form-control signin-form-control" id="document_name" name="document_name" placeholder="Enter document name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="document_type" class="signin-form-label">Document Type:</label>
+                        <select class="form-control signin-form-control" id="document_type" name="document_type">
+                            <option value="">Select document type</option>
+                            <option value="transcript">Transcript</option>
+                            <option value="identification">Identification</option>
+                            <option value="recommendation">Letter of Recommendation</option>
+                            <option value="resume">Resume/CV</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="document_file" class="signin-form-label">File:</label>
+                        <input type="file" class="form-control-file" id="document_file" name="document_file">
+                        <small class="form-text text-muted">Accepted formats: PDF, JPG, PNG (Max size: 5MB)</small>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-block signin-btn">Upload Document</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

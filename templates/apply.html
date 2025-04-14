@@ -1,0 +1,72 @@
+{% extends "_layout.html" %}
+{% block content %}
+<div class="container mt-5">
+    <div class="col-md-8 offset-md-2">
+        <div class="card signin-card">
+            <div class="card-header signin-card-header">
+                <h3 class="text-center">Application Form</h3>
+            </div>
+            <div class="card-body">
+                <form action="/apply" method="POST">
+                    <div class="form-group">
+                        <label for="program" class="signin-form-label">Program of Study:</label>
+                        <select class="form-control signin-form-control" id="program" name="program">
+                            <option value="">Select a program</option>
+                            <option value="computer_science">Computer Science</option>
+                            <option value="data_science">Data Science</option>
+                            <option value="information_technology">Information Technology</option>
+                            <option value="cybersecurity">Cybersecurity</option>
+                            <option value="software_engineering">Software Engineering</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="education" class="signin-form-label">Highest Education Level:</label>
+                        <select class="form-control signin-form-control" id="education" name="education">
+                            <option value="">Select education level</option>
+                            <option value="high_school">High School</option>
+                            <option value="associates">Associate's Degree</option>
+                            <option value="bachelors">Bachelor's Degree</option>
+                            <option value="masters">Master's Degree</option>
+                            <option value="phd">Ph.D. or Doctorate</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="institution" class="signin-form-label">Previous Institution:</label>
+                        <input type="text" class="form-control signin-form-control" id="institution" name="institution" placeholder="Enter your previous institution">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="gpa" class="signin-form-label">GPA:</label>
+                        <input type="number" step="0.01" min="0" max="4.0" class="form-control signin-form-control" id="gpa" name="gpa" placeholder="Enter your GPA">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="statement" class="signin-form-label">Personal Statement:</label>
+                        <textarea class="form-control signin-form-control" id="statement" name="statement" rows="5" placeholder="Write your personal statement here..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="signin-form-label">Have you completed all prerequisite courses?</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="prerequisites" id="prerequisites_yes" value="yes">
+                            <label class="form-check-label" for="prerequisites_yes">Yes</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="prerequisites" id="prerequisites_no" value="no">
+                            <label class="form-check-label" for="prerequisites_no">No</label>
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <strong>Note:</strong> After submitting your application, you will need to upload supporting documents (transcripts, letters of recommendation, etc.) in the Documents section.
+                    </div>
+                    
+                    <button type="submit" class="btn btn-block signin-btn">Submit Application</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

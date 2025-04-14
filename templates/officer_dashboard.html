@@ -1,0 +1,157 @@
+{% extends "_layout.html" %}
+{% block content %}
+<div class="container-fluid mt-5">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card signin-card">
+                <div class="card-header signin-card-header">
+                    <h4>Admissions Officer</h4>
+                </div>
+                <div class="card-body">
+                    <div class="nav flex-column">
+                        <a class="nav-link active" href="#">Applications Dashboard</a>
+                        <a class="nav-link" href="#">Scheduled Interviews</a>
+                        <a class="nav-link" href="#">My Reviews</a>
+                        <a class="nav-link" href="#">Settings</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card signin-card mt-4">
+                <div class="card-header signin-card-header">
+                    <h4>Quick Filters</h4>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label>Status</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="status_submitted" checked>
+                            <label class="form-check-label" for="status_submitted">Submitted</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="status_under_review" checked>
+                            <label class="form-check-label" for="status_under_review">Under Review</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="status_interview" checked>
+                            <label class="form-check-label" for="status_interview">Interview Scheduled</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Program</label>
+                        <select class="form-control signin-form-control">
+                            <option value="">All Programs</option>
+                            <option value="computer_science">Computer Science</option>
+                            <option value="data_science">Data Science</option>
+                            <option value="information_technology">Information Technology</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-block signin-btn">Apply Filters</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-9">
+            <div class="card signin-card">
+                <div class="card-header signin-card-header">
+                    <h3>Applications</h3>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Applicant</th>
+                                    <th>Program</th>
+                                    <th>Status</th>
+                                    <th>Submitted</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for app in applications %}
+                                <tr>
+                                    <td>{{ app.applicationID }}</td>
+                                    <td>{{ app.student_name }}</td>
+                                    <td>{{ app.program }}</td>
+                                    <td>
+                                        {% if app.status == 'submitted' %}
+                                            <span class="badge badge-info">Submitted</span>
+                                        {% elif app.status == 'under review' %}
+                                            <span class="badge badge-primary">Under Review</span>
+                                        {% elif app.status == 'interview scheduled' %}
+                                            <span class="badge badge-warning">Interview</span>
+                                        {% elif app.status == 'accepted' %}
+                                            <span class="badge badge-success">Accepted</span>
+                                        {% elif app.status == 'rejected' %}
+                                            <span class="badge badge-danger">Rejected</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ app.submission_date }}</td>
+                                    <td>
+                                        <a href="/review-application/{{ app.applicationID }}" class="btn btn-sm btn-info">Review</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card signin-card mt-4">
+                <div class="card-header signin-card-header">
+                    <h3>Applications Statistics</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="stat-card">
+                                <h5>Total</h5>
+                                <p class="stat-number">{{ applications|length }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card">
+                                <h5>Pending</h5>
+                                <p class="stat-number">{{ applications|selectattr('status', 'equalto', 'submitted')|list|length }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card">
+                                <h5>In Review</h5>
+                                <p class="stat-number">{{ applications|selectattr('status', 'equalto', 'under review')|list|length }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card">
+                                <h5>Interviews</h5>
+                                <p class="stat-number">{{ applications|selectattr('status', 'equalto', 'interview scheduled')|list|length }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.stat-card {
+    padding: 15px;
+    background-color: #3a3a3a;
+    border-radius: 5px;
+    text-align: center;
+}
+.stat-number {
+    font-size: 24px;
+    font-weight: bold;
+    color: #5533dcb8;
+}
+.badge {
+    padding: 5px 10px;
+    font-size: 14px;
+}
+</style>
+{% endblock %}
