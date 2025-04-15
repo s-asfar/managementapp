@@ -1,48 +1,47 @@
-/* Body Styles */
+/*---------------------------------------
+  CORE STYLES
+---------------------------------------*/
+/* Base Elements */
 body {
     background-color: #1d1e1e;
     color: white;
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
 }
 
-/* Page Title */
+h1, h2, h3, h4, h5, h6 {
+    color: #fff;
+    margin-bottom: 1rem;
+}
+
+a {
+    color: #5533dcb8;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #3911fd;
+    text-decoration: none;
+}
+
+hr {
+    border-color: #39393b;
+    margin: 1.5rem 0;
+}
+
+.container {
+    max-width: 1200px;
+    padding: 0 15px;
+}
+
+/* Page Structure */
 .page-title {
-    margin: 20px;
+    font-size: 2em;
+    margin: 20px 0;
 }
 
-/* Navbar */
-.navbar-brand {
-    margin-bottom: 0;
-}
-
-.navbar-nav .nav-item.active .nav-link {
-    color: #5533dcb8;
-}
-
-.navbar-nav .nav-item:first-child .nav-link {
-    margin-right: 10px;
-}
-
-.navbar-nav .nav-item .nav-link {
-    margin-right: 10px;
-    padding: 8px 3px;
-    border-radius: 5px;
-    width: fit-content;
-}
-
-.navbar {
-    background-color: #2e2e2f;
-}
-
-/* Titles */
-.bold-orange-title {
-    font-weight: bold;
-    color: #5533dcb8;
-}
-
-/* Text */
 .description {
     max-width: 700px;
     overflow-wrap: break-word;
@@ -50,452 +49,117 @@ body {
     padding-top: 10px;
 }
 
-/* Buttons */
-.custom-btn {
-    background-color: #5533dcb8;
-    color: white !important;
-    opacity: 100% !important;
+.card-divider {
+    border-bottom: 2px solid #444;
+    margin: 1.5rem 0;
 }
 
-.custom-btn:hover,
-.custom-btn:focus {
-    background-color: rgb(68, 67, 67);
+.content-wrapper {
+    flex: 1;
+    width: 100%;
+    padding-bottom: 30px; /* Additional padding to prevent content touching footer */
 }
 
-.custom-btn:active {
-    background-color: rgb(56, 1, 207);
+/* For longer pages like the signup page, add more specific padding */
+body:not(.index-page) .content-wrapper {
+    padding-bottom: 50px;
 }
 
-/* Footer */
+/*---------------------------------------
+  NAVIGATION
+---------------------------------------*/
+.navbar {
+    background-color: #2e2e2f;
+    padding: 0.75rem 1rem;
+}
+
+.navbar-brand {
+    margin-bottom: 0;
+    font-size: 1.75rem;
+}
+
+.navbar-nav .nav-item .nav-link {
+    margin-right: 10px;
+    padding: 8px 12px;
+    border-radius: 5px;
+    transition: all 0.2s ease;
+}
+
+.navbar-nav .nav-item.active .nav-link {
+    color: #5533dcb8;
+    font-weight: 500;
+}
+
+.logout-nav {
+    background-color: rgba(209, 4, 4, 0.4);
+    color: white;
+    border: 1px solid white;
+    opacity: 90%;
+}
+
+.logout-nav:hover {
+    background-color: rgba(209, 4, 4, 0.85);
+    color: white;
+    opacity: 100%;
+}
+
+/*---------------------------------------
+  FOOTER
+---------------------------------------*/
 footer {
     width: 100%;
     padding: 20px;
     background-color: #242425;
     color: #fff;
     text-align: center;
+    height: 60px; /* Set explicit height */
     margin-top: auto;
-    position: relative; /* Change from fixed to relative as the default */
+    position: relative;
+    z-index: 10; /* Ensure footer stays on top */
 }
 
-/* Only apply fixed positioning on the index page */
+/* Fixed footer only on index page */
 body.index-page footer {
     position: fixed;
     bottom: 0;
 }
 
-/* Add bottom padding to main content area to prevent footer overlap */
-main {
-    padding-bottom: 80px; /* Adjust based on your footer height */
+/* Make sure main and content wrapper have sufficient padding */
+main.content-wrapper {
+    padding-bottom: 120px !important; /* Increase padding significantly */
 }
 
-.index-page footer {
-    position: fixed;
-    bottom: 0;
-}
-
-/* Workout Styles */
-
-input[type="date"]::-webkit-calendar-picker-indicator {
-    filter: invert(33%) sepia(40%) saturate(2462%) hue-rotate(8deg) brightness(50%) contrast(101%);
-    cursor: pointer;
-}
-
-input[type="date"]:hover::-webkit-calendar-picker-indicator {
-    filter: invert(33%) sepia(40%) saturate(2462%) hue-rotate(8deg) brightness(100%) contrast(101%);
-}
-
-
-#calendar,
-#date,
-#addWorkoutCalendar {
-    min-width: 50px;
-    height: 34px;
-    text-align: center;
-    font-size: 26px;
-    background: rgba(51, 51, 51, 0.9);
-    color: white;
-    border: none;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    border-radius: 3px;
-    padding: 20px 5px;
-}
-
-
-
-.calendar-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.calendar-sub-container {
-    display: flex;
-    flex-direction: row;
-    width: 60%;
-    height: 10vh;
-    align-items: center;
-    justify-content: center;
-
-}
-
-
-
-.left-arrow,
-.right-arrow {
-    font-size: 45px;
-    color: #5533dcb8;
-    opacity: 0.3;
-    cursor: pointer;
-}
-
-.left-arrow:hover,
-.right-arrow:hover {
-    opacity: 1;
-}
-
-.create-workout-btn {
-    background-color: #373736;
-    color: white;
-    font-size: 30px;
-    margin: 20px 0;
-    padding: 0 100px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2), 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-.workout {
-    margin-top: 0 !important;
-}
-
-/* Workout Title Container */
-div.container.info-container.workout-title-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 800px;
-    margin: 0 auto;
-    padding-top: 12px;
-    padding-bottom: 5px;
-    position: relative;
-    box-shadow: none;
-    border-radius: 0;
-    margin-bottom: -5px;
-
-}
-
-.delete-workout{
-    position: absolute;
-    right: 10px;
-    bottom: 5px;
-
-}
-
-button.delete-workout{
-    background: transparent;
-    border: none;
-}
-
-
-
-.container.info-container.workout{
-    padding-bottom: 30px;
-}
-
-.workout-name {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 5vh;
-    font-size: 35px;
-}
-
-/* Form Styles */
-.col form div {
-    display: flex;
-}
-
-.col form div input {
-    flex: 1 1 auto;
-    max-width: 100px;
-}
-
-.col form div span,
-.col form div label,
-.col form div input {
-    margin-right: 5px;
-}
-
-.col form div {
-    display: flex;
-    margin-bottom: 3px;
-}
-
-.btn {
-    color: #5533dcb8;
-    opacity: 50%;
-    font-size: 30px;
-}
-
-.btn:hover {
-    color: #5533dcb8;
-    opacity: 100%;
-    cursor: pointer;
-}
-
-.container {
-    max-width: 60%;
-}
-
-/* Add Input Styles */
-.addInput {
-    background-color: #575757;
-    border: none;
-    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1), 0 3px 10px 0 rgba(0, 0, 0, 0.09);
-}
-
-.addInput.exercise {
-    width: 150px;
-    height: 100px;
-}
-
-.addInput::placeholder {
-    color: white;
-    font-style: italic;
-    opacity: 0.3;
-}
-
-/* Exercise Styles */
-.exercise-name {
-    min-width: 130px;
-    font-size: 22px;
-}
-
-.exercise-name:focus {
-    font-size: 20px;
-}
-
-.exercise {
-    width: 10vw;
-    height: 3vh;
-}
-
-/* Workout Submit Button Container */
-.workout-submit-button-container {
-    display: flex;
-    justify-content: center;
-    margin-top: 0;
-}
-
-
-
-.set-span{
-    margin-right: 15px;
-}
-
-
-/* Add Workout Styles */
-.addworkout {
-    margin-top: 5vh !important;
-    margin-bottom: 2px !important;
-}
-
-/* Preview Set Styles */
-.preview-set {
-    opacity: 0.2;
-}
-
-/* Exercise Title Styles */
-.exercise-title {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-}
-
-/* Close Button Styles */
-.bi.bi-x-square-fill {
-    font-size: xx-large;
-    color: #5533dcb8;
-    opacity: 50%;
-    cursor: pointer;
-}
-
-.bi.bi-x-square-fill:hover {
-    opacity: 100%;
-    cursor: pointer;
-}
-
-/* Set Container Styles */
-.addInput.set:last-child {
-    vertical-align: middle;
-}
-
-/* Minus Button Styles */
-.w-minus {
-    background-color: #2e2e2f;
-    border: none;
-    margin: 0;
-}
-
-/* Plus Button Styles */
-.w-plus {
-    background-color: #2e2e2f;
-    border: none;
-}
-
-/* Dash and Plus Circle Styles */
-.bi-dash-circle-dotted {
-    color: #5533dcb8;
-}
-
-.bi-plus-circle-dotted {
-    color: #5533dcb8;
-}
-
-/* Preview Set Styles */
-.preview-set span:last-child {
-    opacity: 1 !important;
-}
-
-/* Hidden Styles */
-.hidden {
-    display: none;
-}
-
-/* Parent Container Styles */
-.parent-container.addworkout {
-    min-height: 0 !important;
-    width: fit-content;
-}
-
-/* Set Container Input Styles */
-.set-container input,
-.preview-set input {
-    width: 120px;
-}
-
-.set-container {
-    width: fit-content;
-    margin: 0 auto;
-}
-
-/* Parent Container Styles */
-.parent-container {
-    display: flex;
-    flex-direction: column;
-    min-width: 500px;
-    min-height: 200px;
-    position: relative;
-}
-
-/* Info Container Styles */
-.info-container {
-    background-color: #2e2e2f;
-    margin: 15px auto;
-    min-width: 800px;
-    border-radius: 6px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    white-space: nowrap;
-}
-
-/* Horizontal Rule Styles */
-.container hr {
-    border-width: 2px;
-}
-
-/* Info Container Title Styles */
-.info-container-title {
-    padding: 10px 0 0 0;
-    font-size: 27px;
-}
-
-
-
-/* Servings and Calories Styles */
-#servings,
-#calories {
-    color: #aaa;
-}
-
-hr {
-    border-color: #39393b;
-}
-
-/* Add Food Button Styles */
-.info-container .add-food-btn {
-    font-size: 22px;
-    padding: 0;
-    margin-bottom: 10px;
-}
-
-/* Search Bar Container Styles */
-.search-bar-container {
-    width: 50%;
-    margin: 10px auto;
-    display: flex;
-    justify-content: center;
-}
-
-/* Food Link Styles */
-a.food-link {
-    display: block;
-    text-decoration: none;
-    width: fit-content;
-}
-
-/* Signin Container Styles */
-.signin-container {
-    max-width: 400px;
-    margin: 0 auto;
-}
-
-.alert {
-    max-width: 550px;
-    margin: 0 auto;
-    padding: 10px;
-    border-radius: 5px;
-    font-size: 16px;
-    font-weight: bold;
-    margin-top: 20px;
-}
-
-.alert-success {
-    text-align: center;
-    background-color: #dff0d8;
-    color: #3c763d;
-    border: 1px solid #d6e9c6;
-}
-
-.alert-danger {
-    max-width: 550px;
-    text-align: center;
-    background-color: #f2dede;
-    color: #a94442;
-    border: 1px solid #ebccd1;
-}
-
-/* Signin Card Styles */
+/* Add more padding for longer forms */
 .signin-card {
-    background-color: #2e2e2f;
-    color: white;
+    margin-bottom: 4rem; /* Add extra margin to cards */
 }
 
-/* Signin Card Header Styles */
-.signin-card-header {
-    background-color: #5533dcb8;
+/* Give the document upload page even more space */
+body:has(.uploaded-documents) main.content-wrapper {
+    padding-bottom: 140px !important;
 }
 
-/* Signin Form Label Styles */
-.signin-form-label {
-    color: white;
+/*---------------------------------------
+  TEXT STYLING
+---------------------------------------*/
+.bold-orange-title {
+    font-weight: bold;
+    color: #5533dcb8;
 }
 
-/* Signin Form Control Styles */
-.signin-form-control {
-    background-color: #39393b;
-    color: white;
+.white-title {
+    color: #ffffff;
 }
 
-/* Signin Button Styles */
+/*---------------------------------------
+  BUTTONS
+---------------------------------------*/
+.btn {
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    font-weight: 500;
+}
+
 .signin-btn {
     background-color: #5533dcb8;
     border-color: #5533dcb8;
@@ -507,378 +171,130 @@ a.food-link {
     background-color: #3911fd;
     border-color: #3911fd;
     color: white !important;
+    transform: translateY(-2px);
 }
 
-/* Profile Container Styles */
-.profile-container {
-    max-width: 600px;
-    margin: 0 auto;
-}
-
-/* Profile Card Styles */
-.profile-card {
-    background-color: #2e2e2f;
-    color: white;
-}
-
-/* Profile Card Header Styles */
-.profile-card-header {
-    background-color: #5533dcb8;
-}
-
-/* Profile Card Title Styles */
-.profile-card-title {
-    color: #5533dcb8;
-}
-
-/* Profile Card Text Styles */
-.profile-card-text {
-    color: white;
-}
-
-/* Profile Button Styles */
-.profile-btn {
-    background-color: #5533dcb8;
-    border-color: #5533dcb8;
-    color: white;
-}
-
-/* Card Divider Styles */
-.card-divider {
-    border-bottom: 2px solid #444;
-    margin-bottom: 20px;
-}
-
-/* Trainor Styles */
-.trainor {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 20px;
-}
-
-/* Logout Button Styles */
 .logout-btn {
-    background-color: #d10404b4;
+    background-color: rgba(209, 4, 4, 0.7);
     color: white;
-    opacity: 50%;
-}
-
-.logout-nav {
-    background-color: #d1040469;
-    color: white;
-    opacity: 90%;
-}
-
-.logout-nav:hover {
-    background-color: #d10404d8;
-    color: white;
-    opacity: 100%;
 }
 
 .logout-btn:hover {
     background-color: #d10404;
-    opacity: 100%;
     color: white;
 }
 
-/* Chat Box Styles */
-#chatBox {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    height: 80vh;
+/*---------------------------------------
+  CARDS & CONTAINERS
+---------------------------------------*/
+.signin-card {
+    background-color: #2e2e2f;
+    color: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    margin-bottom: 4rem; /* Add extra margin to cards */
 }
 
-/* Chat Input Form Styles */
-form#chatInput {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.signin-card-header {
+    background-color: #5533dcb8;
+    padding: 1rem;
+    border-bottom: none;
 }
 
 .info-container {
     background-color: #2e2e2f;
     margin: 15px auto;
-    min-width: 800px;
     border-radius: 6px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    white-space: nowrap;
+    padding: 1.5rem;
 }
 
-.container hr {
-    border-width: 2px;
+/*---------------------------------------
+  FORMS
+---------------------------------------*/
+.form-group {
+    margin-bottom: 1.25rem;
 }
 
-/* Servings and Calories Styles */
-#servings,
-#calories {
-    background-color: #2e2e2f;
+.signin-form-label {
     color: white;
-    border: none;
-    outline: none;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
 }
 
-/* Parent Container Styles */
-.parent-container {
-    justify-content: center;
-    background-color: #242425;
-    margin: 20px auto;
-    padding: 40px;
-    width: fit-content;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-/* Top Container Styles */
-.top-container {
-    display: flex;
-    justify-content: space-between;
-}
-
-/* Nutrition Label Styles */
-.nutrition-label {
-    flex-grow: 1;
-    margin-right: 10px;
-    width: 300px;
-}
-
-/* Black Rectangle Styles */
-.black-rectangle {
-    background-color: black;
-    color: white;
-}
-
-/* Bottom Container Styles */
-.bottom-container {
-    flex-grow: 1;
-    margin-top: 20px;
-}
-
-/* Nutrition Facts Styles */
-.nutrition-facts {
-    display: flex;
-    flex-direction: column;
-}
-
-/* Nutrition Item Styles */
-.nutrition-item {
-    border-bottom: 1px solid #444444;
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    margin-bottom: 20px;
-}
-
-/* Create Food Button Styles */
-.create-food-btn {
-    margin: 30px auto;
-    text-align: center;
-}
-
-.create-food-form,
-.add-food-form {
-    margin: 15px auto;
-    text-align: center;
-}
-
-/* Servings Box and Add Food Button Styles */
-.servings-box .add-food-btn {
-    margin-top: 100px;
-}
-
-/* Nutrition Value Styles */
-.nutrition-value {
-    text-align: right;
-    width: 100px;
-}
-
-/* Serving Size Styles */
-.serving-size {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    margin-bottom: 30px;
-    font-weight: bold;
-}
-
-/* Search Results Container Styles */
-.search-results-container {
-    background-color: #2e2e2f;
-    color: white;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 4px;
-    margin: 5px auto;
-    border-radius: 4px;
-    width: 600px;
-    min-width: 40%;
-    transition: transform 0.17s ease-in-out;
-}
-
-
-.search-results-container:hover {
-    transform: scale(1.05);
-    background-color: rgba(255, 123, 0, 0.626);
-}
-
-.search-result-link {
-    text-decoration: none;
-    display: block;
-    width: 100%;
-    height: 100%;
-    color: inherit;
-}
-
-.search-result-link:hover {
-    text-decoration: none;
-
-    color: inherit;
-}
-
-.search-bar-container {
-    width: 50%;
-    margin: 10px auto;
-    display: flex;
-    justify-content: center;
-}
-
-a.food-link {
-    display: block;
-    text-decoration: none;
-    width: fit-content;
-}
-
-.search-bar {
-    flex-grow: 1;
-    margin-right: 10px;
-    background-color: #2e2e2f;
-    border: none;
-    outline: none;
-    color: #fff;
-    border-radius: 4px;
-    height: 45px;
-}
-
-.servings-box {
-    padding-left: 90px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    height: 100%;
-}
-
-/* Food Name Styles */
-.food-name {
-    font-size: 20px;
-    font-weight: bold;
-}
-
-/* Food Calories Styles */
-.food-calories {
-    font-size: 20px;
-    color: #aaa;
-}
-
-/* Food Nutrition Styles */
-.food-nutrition {
-    font-size: 18px;
-}
-
-/* Food Info Styles */
-.food-info {
-    display: flex;
-    flex-direction: column;
-}
-
-/* Food Info Container Styles */
-.food-info-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
-}
-
-/* My Foods Button Styles */
-.my-foods-btn {
-    margin-top: 20px;
-}
-
-/* Submit Button Styles */
-.submit-btn {
-    margin-top: 60px;
-    bottom: 0;
-}
-
-/* Page Title Styles */
-.page-title {
-    font-size: 2em;
-    margin-bottom: 10px;
-}
-
-/* Page Description Styles */
-.page-description {
-    margin: 0px 20px;
-    font-size: 1.2em;
-    margin-bottom: 20px;
-    width: 1000px;
-}
-
-/* Button Container Styles */
-.button-container {
-    display: flex;
-    justify-content: center;
-    gap: 30px;
-}
-
-/* Submit Button Styles */
-.submit-btn {
-    margin: 0 auto;
-}
-
-/* Create Food Container Styles */
-#create-food-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin-top: 20px;
-}
-
-/* Input Container Styles */
-.input-container {
-    display: flex;
-    align-items: center;
-    width: 50vw;
-    height: 100%;
-    box-sizing: border-box;
-    margin: 5px 10px;
-}
-
-/* Food Input Label Styles */
-.food-input-label {
-    width: 100px;
-    text-align: left;
-    font-size: 22px;
-}
-
-/* Input Styles */
-.input-container input[type="text"] {
-    margin: 10px auto;
+.signin-form-control {
     background-color: #39393b;
-    width: 300px;
-    height: 30px;
-    font-size: 18px;
+    color: white;
     border: none;
-    outline: none;
-    padding: 0;
-    border-radius: 2px;
-    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-    color: #fff;
-    padding: 0 10px;
+    border-radius: 4px;
+    padding: 0.75rem;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
-/* alert Styles */
+.signin-form-control:focus {
+    background-color: #444;
+    color: white;
+    box-shadow: 0 0 0 0.2rem rgba(85, 51, 220, 0.25);
+    border: none;
+    outline: none;
+}
+
+.form-check-input {
+    cursor: pointer;
+}
+
+.form-check-label {
+    cursor: pointer;
+    padding-left: 0.25rem;
+}
+
+/*---------------------------------------
+  FORM ENHANCEMENTS
+---------------------------------------*/
+.custom-select {
+    height: auto;
+    padding: 10px 15px;
+    appearance: auto; /* Shows the dropdown arrow properly */
+    -webkit-appearance: auto;
+    -moz-appearance: auto;
+}
+
+select.form-control {
+    height: 45px; /* Consistent height with other form controls */
+}
+
+/* Add spacing after the last form group before buttons */
+form .form-group:last-of-type {
+    margin-bottom: 1.5rem;
+}
+
+/*---------------------------------------
+  ALERTS
+---------------------------------------*/
+.alert {
+    max-width: 550px;
+    margin: 20px auto;
+    padding: 1rem;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.alert-success {
+    text-align: center;
+    background-color: #dff0d8;
+    color: #3c763d;
+    border: 1px solid #d6e9c6;
+}
+
+.alert-danger {
+    text-align: center;
+    background-color: #f2dede;
+    color: #a94442;
+    border: 1px solid #ebccd1;
+}
+
 .danger-alert {
     margin: 10px auto;
     margin-top: 40px;
@@ -886,7 +302,6 @@ a.food-link {
     font-size: 20px;
     font-weight: bold;
     text-align: center;
-    background-color: #f2dede;
     color: #ffffff;
     background-color: #a93634;
     border-radius: 5px;
@@ -900,21 +315,57 @@ a.food-link {
     font-size: 20px;
     font-weight: bold;
     text-align: center;
-    background-color: #f2dede;
     color: #ffffff;
     background-color: #1e7513;
     border-radius: 5px;
     max-width: 550px;
 }
 
-/* User Info Title */
+/*---------------------------------------
+  HOME PAGE FEATURES
+---------------------------------------*/
+.feature-card {
+    background-color: #2e2e2f;
+    padding: 20px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    height: 100%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+}
+
+.feature-card h3 {
+    color: #5533dcb8;
+    margin-bottom: 15px;
+}
+
+.feature-card ul {
+    padding-left: 20px;
+    margin-bottom: 20px;
+}
+
+.feature-card li {
+    margin-bottom: 5px;
+}
+
+.features-section {
+    margin-bottom: 50px;
+}
+
+/*---------------------------------------
+  PROFILE ELEMENTS
+---------------------------------------*/
 .user-info-title {
     color: #5533dcb8;
     font-size: 20px;
     margin-bottom: 10px;
 }
 
-/* User Info Text */
 .user-info-text {
     color: white;
     font-size: 18px;
@@ -922,112 +373,128 @@ a.food-link {
     text-align: left;
 }
 
-/* Fitness Stats Title */
-.fitness-stats-title {
-    color: #5533dcb8;
-    font-size: 20px;
-    margin-top: 30px;
-    margin-bottom: 10px;
-}
-
-/* Fitness Stats Text */
-.fitness-stats-text {
-    color: white;
-    font-size: 18px;
-    margin-bottom: 10px;
-    text-align: left;
-}
-
-
-/* Comment Section Styles */
-.comment-section {
+/*---------------------------------------
+  APPLICATION STATUS
+---------------------------------------*/
+.timeline {
+    position: relative;
+    padding: 20px 0;
     margin-top: 20px;
 }
 
-.comment-form {
+.timeline-item {
+    display: flex;
     margin-bottom: 20px;
 }
 
-.comment-form textarea {
-    width: 100%;
-    height: 100px;
-    resize: vertical;
-    padding: 5px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-}
-
-.comment-form button {
-    background-color: #5533dcb8;
+.timeline-marker {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #2e2e2f;
     color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 4px;
-    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 15px;
+    font-weight: bold;
+    border: 2px solid #5533dcb8;
 }
 
-.comment-list {
-    list-style-type: none;
-    padding: 0;
+.timeline-marker.completed {
+    background-color: #5533dcb8;
 }
 
-.comment {
+.timeline-content h5 {
+    margin-bottom: 5px;
+    color: #5533dcb8;
+}
+
+.feedback-item {
     margin-bottom: 10px;
     padding: 10px;
-    background-color: #f5f5f5;
-    border-radius: 4px;
+    background-color: #3a3a3a;
+    border-radius: 5px;
 }
 
-.comment .comment-author {
+.feedback-date {
+    color: #aaa;
+    font-size: 0.9em;
+    margin-bottom: 5px;
+}
+
+/*---------------------------------------
+  DASHBOARD ELEMENTS
+---------------------------------------*/
+.stat-card {
+    padding: 15px;
+    background-color: #3a3a3a;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.stat-number {
+    font-size: 24px;
     font-weight: bold;
+    color: #5533dcb8;
 }
 
-.comment .comment-date {
-    font-size: 12px;
-    color: #888;
+.badge {
+    padding: 5px 10px;
+    font-size: 14px;
 }
 
-.comment .comment-content {
-    margin-top: 5px;
+/* Status badges */
+.badge-info {
+    background-color: #17a2b8;
 }
 
-.comment-submit {
-    max-width: 190px;
-    max-height: 75px;
-}
-
-.edit-btn {
-    font-size: 18px; /* Decreased font size */
-    padding: 6px 12px; /* Decreased padding */
-}
-
-
-
-.comments-form > p {
-    margin: 0;
-    color: black;
-}
-
-.delete-button{
+.badge-primary {
     background-color: #5533dcb8;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-left: 600px;
 }
 
-.edit-button{
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-left: 610px;
-    margin-bottom: 10px;
+.badge-warning {
+    background-color: #ffc107;
+    color: #212529;
 }
 
-.comment-username{
-    font-size: 20px;
-    color: #3b3b3b;
+.badge-success {
+    background-color: #28a745;
+}
+
+.badge-danger {
+    background-color: #dc3545;
+}
+
+/*---------------------------------------
+  RESPONSIVE ADJUSTMENTS
+---------------------------------------*/
+@media (max-width: 991px) {
+    .container {
+        max-width: 90%;
+    }
+    
+    .info-container {
+        min-width: auto;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        max-width: 100%;
+    }
+    
+    .description {
+        font-size: 18px;
+    }
+    
+    .timeline-marker {
+        width: 24px;
+        height: 24px;
+        font-size: 12px;
+    }
+    
+    .feature-card {
+        margin-bottom: 15px;
+    }
 }

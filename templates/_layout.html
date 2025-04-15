@@ -13,8 +13,9 @@
 
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark">
-        <h1 class="navbar-brand">Ad<span style="color:#3c14de9f;">mission</span>s</h1>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+        <a href="/" class="navbar-brand">
+            Ad<span style="color:#3c14de9f;">mission</span>s
+        </a>        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
             aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -28,7 +29,6 @@
                     <a class="nav-link" href="/profile">Profile</a>
                 </li>
                 
-                <!-- Student-specific nav items -->
                 {% if session.get('role') == 'student' %}
                 <li class="nav-item {% if active_page == 'apply' %}active{% endif %}">
                     <a class="nav-link" href="/apply">Apply</a>
@@ -41,14 +41,12 @@
                 </li>
                 {% endif %}
                 
-                <!-- Officer-specific nav items -->
                 {% if session.get('role') == 'officer' %}
                 <li class="nav-item {% if active_page == 'officer_dashboard' %}active{% endif %}">
                     <a class="nav-link" href="/officer-dashboard">Dashboard</a>
                 </li>
                 {% endif %}
                 
-                <!-- Admin-specific nav items -->
                 {% if session.get('role') == 'admin' %}
                 <li class="nav-item {% if active_page == 'admin_dashboard' %}active{% endif %}">
                     <a class="nav-link" href="/admin-dashboard">Dashboard</a>
@@ -94,11 +92,12 @@
     {% endif %}
     {% endwith %}
 
-    {% block content %}{% endblock %}
+    <main class="content-wrapper">
+        {% block content %}{% endblock %}
+    </main>
     <footer>
         <span class="text-muted">© 2025 Online Admissions Management System. All rights reserved.</span>
     </footer>
-
 
     <script src="{{ url_for('static', filename='javascript/script.js') }}"></script>
     <script src="https://unpkg.com/htmx.org@1.9.11"></script>
