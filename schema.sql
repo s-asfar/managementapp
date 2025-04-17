@@ -5,9 +5,10 @@ CREATE TABLE Users (
     email VARCHAR(255) UNIQUE,
     password VARCHAR(255),
     name VARCHAR(255),
-    role VARCHAR(50) NOT NULL DEFAULT 'student', -- 'student', 'officer', 'admin'
+    role VARCHAR(50) NOT NULL DEFAULT 'student',
     phone VARCHAR(20),
     address TEXT,
+    age INTEGER,
     date_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -15,7 +16,7 @@ CREATE TABLE Applications (
     applicationID UUID PRIMARY KEY,
     userID UUID REFERENCES Users(userID),
     program VARCHAR(255),
-    status VARCHAR(50) DEFAULT 'submitted', -- 'submitted', 'under review', 'interview scheduled', 'accepted', 'rejected'
+    status VARCHAR(50) DEFAULT 'submitted',
     submission_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

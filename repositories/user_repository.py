@@ -68,6 +68,7 @@ def get_user_by_id(userID: uuid.UUID) -> dict[str, Any] | None:
                             role,
                             phone,
                             address,
+                            age, -- Add age here
                             date_created
                         FROM
                             users
@@ -76,16 +77,16 @@ def get_user_by_id(userID: uuid.UUID) -> dict[str, Any] | None:
             user = cur.fetchone()
             return user
 
-def update_user(userID: uuid.UUID, name: str, phone: str = None, address: str = None) -> dict[str, Any] | None:
+def update_user(userID: uuid.UUID, name: str, phone: str = None, address: str = None, age: int = None) -> dict[str, Any] | None: # Add age parameter
     pool = get_pool()
     with pool.connection() as conn:
         with conn.cursor(row_factory=dict_row) as cur:
             cur.execute('''
                 UPDATE users
-                SET name = %s, phone = %s, address = %s
+                SET name = %s, phone = %s, address = %s, age = %s -- Add age to SET
                 WHERE userID = %s
-                RETURNING userID, email, name, role, phone, address, date_created
-            ''', (name, phone, address, userID))
+                RETURNING userID, email, name, role, phone, address, age, date_created -- Add age to RETURNING
+            ''', (name, phone, address, age, userID)) # Add age to tuple
             updated_user = cur.fetchone()
             return updated_user
 
@@ -101,6 +102,7 @@ def get_user_profile_data(userID: uuid.UUID) -> dict[str, Any] | None:
                             u.role,
                             u.phone,
                             u.address,
+                            u.age, -- Add age here
                             u.date_created,
                             (SELECT COUNT(*) FROM Applications WHERE userID = u.userID) AS applications_count
                         FROM

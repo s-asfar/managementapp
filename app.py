@@ -96,8 +96,10 @@ def signup_account():
     user_repository.create_user(email, hashed_password, role)
     user = user_repository.get_user_by_email(email)
     session['userID'] = user['userID']
-    flash('Account created successfully!', 'success')
-    return redirect(url_for('profile'))
+    session['role'] = user['role']  # Store role in session as well
+    flash('Account created successfully! Please complete your profile.', 'success')
+    # Redirect to edit profile instead of main profile
+    return redirect(url_for('edit_profile'))
 
 @app.post('/signin')
 def signin_account():
@@ -125,19 +127,38 @@ def update_profile():
     name = request.form.get('name')
     phone = request.form.get('phone')
     address = request.form.get('address')
+    age_str = request.form.get('age')  # Get age as string
     
     if not name:
         flash('Name is required.', 'danger')
-        return render_template('editprofile.html', user=user_repository.get_user_by_id(userID), active_page='profile')
+        # Fetch user data again for rendering the template
+        user = user_repository.get_user_by_id(userID)
+        return render_template('editprofile.html', user=user, active_page='profile')
     
-    updated_user = user_repository.update_user(userID, name, phone, address)
+    # Validate and convert age
+    age = None
+    if age_str:
+        try:
+            age = int(age_str)
+            if age <= 0:  # Basic validation
+                flash('Please enter a valid age.', 'danger')
+                user = user_repository.get_user_by_id(userID)
+                return render_template('editprofile.html', user=user, active_page='profile')
+        except ValueError:
+            flash('Age must be a number.', 'danger')
+            user = user_repository.get_user_by_id(userID)
+            return render_template('editprofile.html', user=user, active_page='profile')
+    
+    # Pass age to the update function
+    updated_user = user_repository.update_user(userID, name, phone, address, age)
+    
     if updated_user is None:
         flash('An error occurred while updating the profile.', 'danger')
-        return redirect(url_for('profile'))
+    else:
+        flash('Profile updated successfully!', 'success')
     
-    user_data = user_repository.get_user_profile_data(userID)
-    flash('Profile updated successfully!', 'success')
-    return render_template('profile.html', user=user_data, active_page='profile')
+    # Redirect to the main profile page after updating
+    return redirect(url_for('profile'))
 
 @app.get('/apply')
 def apply_form():
