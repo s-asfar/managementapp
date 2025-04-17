@@ -14,7 +14,6 @@ app = Flask(__name__)
 bcrypt = Bcrypt(app)
 app.secret_key = os.getenv('APP_SECRET_KEY')
 
-# Helper function to check user role
 def require_role(role):
     if 'userID' not in session:
         flash('You must be signed in to access this page.', 'danger')
@@ -26,12 +25,10 @@ def require_role(role):
         return redirect(url_for('index'))
     return None
 
-# index
 @app.get('/')
 def index():
     return render_template('index.html', active_page='home')
 
-# Authentication Routes
 @app.get('/signin')
 def signin():
     if 'userID' in session:
@@ -71,7 +68,6 @@ def edit_profile():
     user = user_repository.get_user_by_id(userID)
     return render_template('editprofile.html', user=user, active_page='profile')
 
-# Authentication POST routes
 @app.post('/signup')
 def signup_account():
     if 'userID' in session:
@@ -143,17 +139,13 @@ def update_profile():
     flash('Profile updated successfully!', 'success')
     return render_template('profile.html', user=user_data, active_page='profile')
 
-# Student Routes
 @app.get('/apply')
 def apply_form():
     if 'userID' not in session:
         flash('You must be signed in to apply.', 'danger')
         return redirect(url_for('signin'))
     
-    # Check if user already has an application
     userID = session.get('userID')
-    # This would check if the user already has an application in the database
-    # For now, just render the application form
     
     return render_template('apply.html', active_page='apply')
 
@@ -169,10 +161,7 @@ def submit_application():
     if not program:
         flash('Program selection is required.', 'danger')
         return redirect(url_for('apply_form'))
-    
-    # This would create an application in the database
-    # For now, just show a success message
-    
+        
     flash('Application submitted successfully!', 'success')
     return redirect(url_for('application_status'))
 
@@ -180,5 +169,111 @@ def submit_application():
 def application_status():
     if 'userID' not in session:
         flash('You must be signed in to view application status.', 'danger')
-        return
+        return redirect(url_for('signin'))
+    
+    userID = session.get('userID')
+    return render_template('application_status.html', active_page='application')
 
+@app.get('/upload-documents')
+def upload_documents_form():
+    if 'userID' not in session:
+        flash('You must be signed in to upload documents.', 'danger')
+        return redirect(url_for('signin'))
+    
+    return render_template('upload_documents.html', active_page='documents')
+
+@app.post('/upload-documents')
+def upload_documents():
+    if 'userID' not in session:
+        flash('You must be signed in to upload documents.', 'danger')
+        return redirect(url_for('signin'))
+    
+    flash('Document uploaded successfully!', 'success')
+    return redirect(url_for('upload_documents_form'))
+
+@app.get('/officer-dashboard')
+def officer_dashboard():
+    if 'userID' not in session:
+        flash('You must be signed in to access the officer dashboard.', 'danger')
+        return redirect(url_for('signin'))
+    
+    userID = session.get('userID')
+    user = user_repository.get_user_by_id(userID)
+    if not user or user.get('role') != 'officer':
+        flash('You do not have permission to access this page.', 'danger')
+        return redirect(url_for('index'))
+    return render_template('officer_dashboard.html', active_page='officer_dashboard')
+
+@app.get('/review-application/<application_id>')
+def review_application(application_id):
+    restrict = require_role('officer')
+    if restrict:
+        return restrict
+    
+    return render_template('review_application.html', active_page='officer_dashboard')
+
+@app.post('/update-application-status/<application_id>')
+def update_application_status(application_id):
+    restrict = require_role('officer')
+    if restrict:
+        return restrict
+    
+    new_status = request.form.get('status')
+    feedback = request.form.get('feedback')
+    
+    flash('Application status updated successfully!', 'success')
+    return redirect(url_for('officer_dashboard'))
+
+@app.get('/schedule-interview/<application_id>')
+def schedule_interview_form(application_id):
+    restrict = require_role('officer')
+    if restrict:
+        return restrict 
+    return render_template('schedule_interview.html', active_page='officer_dashboard')
+
+@app.post('/schedule-interview/<application_id>')
+def schedule_interview(application_id):
+    restrict = require_role('officer')
+    if restrict:
+        return restrict
+    
+    date = request.form.get('date')
+    time = request.form.get('time')
+    location = request.form.get('location')
+    notes = request.form.get('notes')
+    
+    flash('Interview scheduled successfully!', 'success')
+    return redirect(url_for('officer_dashboard'))
+
+@app.get('/admin-dashboard')
+def admin_dashboard():
+    restrict = require_role('admin')
+    if restrict:
+        return restrict
+    
+    return render_template('admin_dashboard.html', active_page='admin_dashboard')
+
+@app.get('/generate-report')
+def generate_report_form():
+    restrict = require_role('admin')
+    if restrict:
+        return restrict
+    
+    return render_template('generate_report.html', active_page='admin_dashboard')
+
+@app.post('/generate-report')
+def generate_report():
+    restrict = require_role('admin')
+    if restrict:
+        return restrict
+    
+    report_type = request.form.get('report_type')
+    start_date = request.form.get('start_date')
+    end_date = request.form.get('end_date')
+    
+    # This would need to be replaced with actual data from the database
+    
+    return render_template('report_result.html', active_page='admin_dashboard')
+
+if __name__ == '__main__':
+    app.run(debug=True)
