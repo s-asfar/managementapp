@@ -2,6 +2,7 @@ import uuid
 from typing import Any
 from repositories.db import get_pool
 from psycopg.rows import dict_row
+from flask_bcrypt import Bcrypt # Add this import if not already present
 
 
 def does_email_exist(email: str) -> bool:
@@ -111,3 +112,19 @@ def get_user_profile_data(userID: uuid.UUID) -> dict[str, Any] | None:
                         ''', [userID])
             user_data = cur.fetchone()
             return user_data
+
+def update_password(email: str, new_hashed_password: str) -> bool:
+    pool = get_pool()
+    with pool.connection() as conn:
+        with conn.cursor() as cur:
+            try:
+                cur.execute('''
+                    UPDATE users
+                    SET password = %s
+                    WHERE email = %s
+                ''', (new_hashed_password, email))
+                return cur.rowcount > 0
+            except Exception as e:
+                print(f"Error updating password: {e}")
+                conn.rollback()
+                return False

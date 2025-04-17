@@ -90,23 +90,24 @@
                     </div>
                 </div>
                 
-                {% if application.feedback %}
+                {% if feedback %} <!-- Changed from application.feedback -->
                     <div class="card-divider"></div>
                     <h4>Feedback from Admissions Office</h4>
                     <div class="feedback-section">
-                        {% for feedback in application.feedback %}
+                        {% for item in feedback %} <!-- Changed variable name -->
                             <div class="feedback-item">
-                                <p class="feedback-date">{{ feedback.date }}</p>
-                                <p class="feedback-content">{{ feedback.content }}</p>
+                                <p class="feedback-date">{{ item.created_at.strftime('%Y-%m-%d %H:%M') }} ({{ item.officer_name }})</p>
+                                <p class="feedback-content">{{ item.content }}</p>
                             </div>
                         {% endfor %}
                     </div>
                 {% endif %}
-                
+
                 <div class="card-divider"></div>
-                
+
                 <div class="text-center">
-                    <a href="/upload-documents" class="btn signin-btn">Manage Documents</a>
+                    <!-- Link to upload documents for this specific application -->
+                    <a href="{{ url_for('upload_documents_form', application_id=application.applicationID) }}" class="btn signin-btn">Manage Documents</a>
                 </div>
             </div>
         </div>

@@ -1,0 +1,51 @@
+{% extends "_layout.html" %}
+{% block content %}
+<div class="container mt-5">
+    <div class="card signin-card">
+        <div class="card-header signin-card-header">
+             <h3 class="text-center">Report: Detailed Application List</h3>
+             <p class="text-center text-white">
+                {% if start_date or end_date %}
+                    Date Range: {{ start_date or 'Beginning' }} to {{ end_date or 'End' }}
+                {% else %}
+                    Date Range: All Time
+                {% endif %}
+            </p>
+        </div>
+        <div class="card-body">
+             <div class="table-responsive">
+                <table class="table table-dark table-hover table-sm">
+                    <thead>
+                        <tr>
+                            <th>Applicant</th>
+                            <th>Program</th>
+                            <th>Status</th>
+                            <th>Submitted</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for app in report_data %}
+                        <tr>
+                            <td>{{ app.student_name }}</td>
+                            <td>{{ app.program }}</td>
+                            <td><span class="badge badge-primary">{{ app.status|capitalize }}</span></td>
+                            <td>{{ app.submission_date.strftime('%Y-%m-%d') }}</td>
+                            <td>
+                                <a href="{{ url_for('review_application_form', application_id=app.applicationID) }}" class="btn btn-sm btn-info">View</a>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="5">No applications found for this period.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+             <div class="mt-4">
+                 <a href="{{ url_for('generate_report_form') }}" class="btn btn-secondary">Generate Another Report</a>
+                 <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
+             </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

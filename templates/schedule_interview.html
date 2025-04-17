@@ -1,0 +1,31 @@
+{% extends "_layout.html" %}
+{% block content %}
+<div class="container mt-5">
+    <div class="col-md-6 offset-md-3">
+        <div class="card signin-card">
+            <div class="card-header signin-card-header">
+                <h3 class="text-center">Schedule Interview</h3>
+                <p class="text-center text-white">For Application: {{ application.applicationID|string|truncate(8, True, '') }} ({{ application.student_name }})</p>
+            </div>
+            <div class="card-body">
+                <form action="{{ url_for('schedule_interview_post', application_id=application.applicationID) }}" method="POST">
+                    <div class="form-group">
+                        <label for="schedule_date" class="signin-form-label">Date and Time:</label>
+                        <input type="datetime-local" class="form-control signin-form-control" id="schedule_date" name="schedule_date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="location" class="signin-form-label">Location/Platform:</label>
+                        <input type="text" class="form-control signin-form-control" id="location" name="location" placeholder="e.g., Room 101, Zoom Link, Google Meet" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="notes" class="signin-form-label">Notes (Optional):</label>
+                        <textarea class="form-control signin-form-control" id="notes" name="notes" rows="3" placeholder="Internal notes or instructions for the student..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-block signin-btn">Schedule Interview</button>
+                    <a href="{{ url_for('review_application_form', application_id=application.applicationID) }}" class="btn btn-secondary btn-block mt-2">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

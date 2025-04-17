@@ -13,9 +13,14 @@ CREATE TABLE Users (
 );
 
 CREATE TABLE Applications (
-    applicationID UUID PRIMARY KEY,
+    applicationID UUID PRIMARY KEY DEFAULT uuid_generate_v4(), -- Add default UUID generation
     userID UUID REFERENCES Users(userID),
     program VARCHAR(255),
+    education_level VARCHAR(100),
+    previous_institution VARCHAR(255),
+    gpa NUMERIC(3, 2),
+    personal_statement TEXT,
+    prerequisites_completed BOOLEAN,
     status VARCHAR(50) DEFAULT 'submitted',
     submission_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
