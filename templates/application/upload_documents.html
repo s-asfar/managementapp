@@ -25,12 +25,12 @@
                                 {% for doc in documents %}
                                 <tr>
                                     <td>
-                                        <a href="{{ url_for('uploaded_file', filename=doc.file_path.split('/')[-1]) }}" target="_blank">{{ doc.document_name }}</a>
+                                        <a href="{{ url_for('uploaded_file', filename=doc.file_path) }}" target="_blank">{{ doc.document_name }}</a>
                                     </td>
                                     <td>{{ doc.document_type|capitalize }}</td>
                                     <td>{{ doc.upload_date.strftime('%Y-%m-%d %H:%M') }}</td>
                                     <td>
-                                        <form action="{{ url_for('delete_document', document_id=doc.documentID) }}" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this document?');">
+                                        <form action="{{ url_for('delete_document', document_id=doc.documentid) }}" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this document?');">
                                             <button type="submit" class="btn btn-sm btn-danger">Delete</button>
                                         </form>
                                     </td>

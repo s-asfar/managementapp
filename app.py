@@ -18,7 +18,7 @@ app.secret_key = os.getenv('APP_SECRET_KEY', 'fallback_secret_key_123')
 UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg', 'doc', 'docx'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024
+app.config['MAX_CONTENT_LENGTH'] = 20 * 1024 * 1024
 
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
@@ -40,7 +40,7 @@ def require_role(role):
 
 @app.get('/')
 def index():
-    return render_template('index/index.html', active_page='home')
+    return render_template('index.html', active_page='home')
 
 @app.get('/signin')
 def signin():
@@ -295,21 +295,21 @@ def upload_documents(application_id):
         original_filename = secure_filename(file.filename)
         file_extension = original_filename.rsplit('.', 1)[1].lower()
         unique_filename = f"{uuid.uuid4()}.{file_extension}"
-        file_path = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
+        full_save_path = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
 
         try:
-            file.save(file_path)
-            new_doc = document_repository.add_document(application_id, document_name, document_type, file_path)
+            file.save(full_save_path)
+            new_doc = document_repository.add_document(application_id, document_name, document_type, unique_filename)
             if new_doc:
                 flash('Document uploaded successfully!', 'success')
             else:
                  flash('Failed to save document record to database.', 'danger')
-                 if os.path.exists(file_path):
-                     os.remove(file_path)
+                 if os.path.exists(full_save_path):
+                     os.remove(full_save_path)
         except Exception as e:
             flash(f'An error occurred during file upload: {e}', 'danger')
-            if os.path.exists(file_path):
-                os.remove(file_path)
+            if os.path.exists(full_save_path):
+                os.remove(full_save_path)
 
     else:
         flash('Invalid file type or file error.', 'danger')
@@ -323,27 +323,69 @@ def delete_document(document_id):
         return restrict
 
     doc = document_repository.get_document_by_id(document_id)
-    if not doc:
-        flash('Document not found.', 'danger')
-        return redirect(url_for('profile'))
+    print(f"--- Deleting Document ---")
+    print(f"Document ID: {document_id}")
+    print(f"Document data from DB: {doc}")
 
-    application = application_repository.get_application_by_id(doc['applicationid'])
+    if not doc:
+        flash('Document not found in database.', 'danger')
+        return redirect(url_for('profile')) # Redirect to profile if doc not found
+
+    application_id_for_redirect = doc.get('applicationid')
+    if not application_id_for_redirect:
+         flash('Error: Application ID missing from document record.', 'danger')
+         return redirect(url_for('profile')) 
+
+    application = application_repository.get_application_by_id(application_id_for_redirect)
     if not application or application['userid'] != session['userID']:
         flash('You do not have permission to delete this document.', 'danger')
-        return redirect(url_for('profile'))
+        return redirect(url_for('application_status'))
 
-    if doc['file_path'] and os.path.exists(doc['file_path']):
-        try:
-            os.remove(doc['file_path'])
-        except Exception as e:
-            flash(f"Error deleting file from system: {e}", 'warning')
+    filename_to_delete = doc.get('file_path') 
+    print(f"Filename extracted from DB record (key 'file_path'): {filename_to_delete}")
 
-    if document_repository.delete_document(document_id):
-        flash('Document deleted successfully.', 'success')
+    file_deleted_from_system = False
+    if filename_to_delete:
+        safe_filename = secure_filename(filename_to_delete)
+        if safe_filename != filename_to_delete:
+             print(f"Warning: Filename '{filename_to_delete}' might contain invalid characters. Using secured version '{safe_filename}'.")
+
+             filename_to_delete = safe_filename
+
+        full_delete_path = os.path.join(app.config['UPLOAD_FOLDER'], filename_to_delete)
+        print(f"Constructed full path for deletion: {full_delete_path}")
+
+        if os.path.exists(full_delete_path):
+            print(f"File exists at path. Attempting os.remove()...")
+            try:
+                os.remove(full_delete_path)
+                file_deleted_from_system = True
+                print(f"File successfully removed from filesystem.")
+            except OSError as e:
+                print(f"OS Error deleting file: {e}")
+                flash(f"Error deleting file from system: {e.strerror}", 'warning')
+            except Exception as e:
+                print(f"Unexpected Error deleting file: {e}") 
+                flash(f"An unexpected error occurred while deleting the file.", 'warning')
+        else:
+             print(f"File does NOT exist at path: {full_delete_path}")
+             flash(f"File not found on system: {filename_to_delete}", 'warning')
     else:
-        flash('Failed to delete document record.', 'danger')
+        print(f"No filename found in the database record for document ID {document_id}.")
+        flash('No filename associated with this document record.', 'warning')
 
-    return redirect(url_for('upload_documents_form', application_id=doc['applicationid']))
+    db_record_deleted = document_repository.delete_document(document_id)
+    print(f"Database delete result for doc ID {document_id}: {db_record_deleted}")
+
+    if db_record_deleted:
+        if file_deleted_from_system:
+             flash('Document record and file deleted successfully.', 'success')
+        else:
+             flash('Document record deleted, but the file may not have been removed from the system (check warnings/logs).', 'success')
+    else:
+        flash('Failed to delete document record from database.', 'danger')
+
+    return redirect(url_for('upload_documents_form', application_id=application_id_for_redirect))
 
 @app.get('/uploads/<filename>')
 def uploaded_file(filename):
@@ -354,11 +396,16 @@ def uploaded_file(filename):
     if safe_filename != filename:
         abort(404)
 
-    file_path = os.path.join(app.config['UPLOAD_FOLDER'], safe_filename)
-    if not os.path.exists(file_path):
+    full_file_path = os.path.join(app.config['UPLOAD_FOLDER'], safe_filename)
+    if not os.path.exists(full_file_path):
+        print(f"Attempted to access non-existent file: {full_file_path}")
         abort(404)
 
-    return send_from_directory(app.config['UPLOAD_FOLDER'], safe_filename)
+    try:
+        return send_from_directory(app.config['UPLOAD_FOLDER'], safe_filename, as_attachment=False)
+    except Exception as e:
+        print(f"Error sending file {safe_filename}: {e}")
+        abort(500)
 
 @app.get('/officer-dashboard')
 def officer_dashboard():

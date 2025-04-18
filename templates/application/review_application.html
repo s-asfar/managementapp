@@ -3,7 +3,7 @@
 <div class="container mt-5">
     <div class="card signin-card">
         <div class="card-header signin-card-header">
-            <h3 class="text-center">Review Application #{{ application.applicationID|string|truncate(8, True, '') }}</h3>
+            <h3 class="text-center">Review Application #{{ application.applicationid|string|truncate(8, True, '') }}</h3>
         </div>
         <div class="card-body">
             <h4>Applicant Information</h4>
@@ -30,7 +30,7 @@
             <ul>
                 {% for doc in documents %}
                 <li>
-                    <a href="{{ url_for('uploaded_file', filename=doc.file_path.split('/')[-1]) }}" target="_blank">{{ doc.document_name }}</a> ({{ doc.document_type|capitalize }}) - Uploaded: {{ doc.upload_date.strftime('%Y-%m-%d') }}
+                    <a href="{{ url_for('uploaded_file', filename=doc.file_path) }}" target="_blank">{{ doc.document_name }}</a> ({{ doc.document_type|capitalize }}) - Uploaded: {{ doc.upload_date.strftime('%Y-%m-%d') }}
                 </li>
                 {% endfor %}
             </ul>
@@ -41,7 +41,7 @@
             <div class="card-divider"></div>
 
             <h4>Update Status & Add Feedback</h4>
-            <form action="{{ url_for('update_application_status', application_id=application.applicationID) }}" method="POST">
+            <form action="{{ url_for('update_application_status', application_id=application.applicationid) }}" method="POST">
                 <div class="form-group">
                     <label for="status" class="signin-form-label">New Status:</label>
                     <select class="form-control signin-form-control" id="status" name="status">
@@ -76,7 +76,7 @@
              <div class="mt-4">
                  <a href="{{ url_for('officer_dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
                  {% if application.status in ['under review', 'submitted', 'more info required'] %}
-                     <a href="{{ url_for('schedule_interview_form', application_id=application.applicationID) }}" class="btn btn-warning">Schedule Interview</a>
+                     <a href="{{ url_for('schedule_interview_form', application_id=application.applicationid) }}" class="btn btn-warning">Schedule Interview</a>
                  {% endif %}
              </div>
 

@@ -13,7 +13,7 @@ CREATE TABLE Users (
 );
 
 CREATE TABLE Applications (
-    applicationID UUID PRIMARY KEY DEFAULT uuid_generate_v4(), -- Add default UUID generation
+    applicationID UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     userID UUID REFERENCES Users(userID),
     program VARCHAR(255),
     education_level VARCHAR(100),
@@ -42,7 +42,7 @@ CREATE TABLE Interviews (
     schedule_date TIMESTAMP,
     location VARCHAR(255),
     notes TEXT,
-    status VARCHAR(50) DEFAULT 'scheduled' -- 'scheduled', 'completed', 'cancelled'
+    status VARCHAR(50) DEFAULT 'scheduled'
 );
 
 CREATE TABLE Feedback (

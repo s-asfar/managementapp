@@ -3,7 +3,7 @@ from typing import Any, List
 from repositories.db import get_pool
 from psycopg.rows import dict_row
 
-def add_document(application_id: uuid.UUID, document_name: str, document_type: str, file_path: str) -> dict[str, Any] | None:
+def add_document(application_id: uuid.UUID, document_name: str, document_type: str, filename: str) -> dict[str, Any] | None:
     pool = get_pool()
     document_id = uuid.uuid4()
     with pool.connection() as conn:
@@ -12,8 +12,8 @@ def add_document(application_id: uuid.UUID, document_name: str, document_type: s
                 cur.execute('''
                     INSERT INTO Documents (documentID, applicationID, document_name, document_type, file_path)
                     VALUES (%s, %s, %s, %s, %s)
-                    RETURNING documentID, applicationID, document_name, document_type, upload_date
-                ''', (document_id, application_id, document_name, document_type, file_path))
+                    RETURNING documentID, applicationID, document_name, document_type, file_path, upload_date
+                ''', (document_id, application_id, document_name, document_type, filename))
                 new_doc = cur.fetchone()
                 return new_doc
             except Exception as e:

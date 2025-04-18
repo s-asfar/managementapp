@@ -83,7 +83,7 @@
                             <tbody id="applications_table_body">
                                 {% for app in applications %}
                                 <tr data-program="{{ app.program }}" data-status="{{ app.status }}">
-                                    <td>{{ app.applicationID|string|truncate(8, True, '') }}</td>
+                                    <td>{{ app.applicationid|string|truncate(8, True, '') }}</td>
                                     <td>{{ app.student_name }}</td>
                                     <td>{{ app.program }}</td>
                                     <td>
@@ -105,7 +105,7 @@
                                     </td>
                                     <td>{{ app.submission_date.strftime('%Y-%m-%d') }}</td>
                                     <td>
-                                        <a href="{{ url_for('review_application_form', application_id=app.applicationID) }}" class="btn btn-sm btn-info">Review</a>
+                                        <a href="{{ url_for('review_application_form', application_id=app.applicationid) }}" class="btn btn-sm btn-info">Review</a>
                                     </td>
                                 </tr>
                                 {% else %}
