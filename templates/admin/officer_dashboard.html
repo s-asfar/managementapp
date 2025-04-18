@@ -23,28 +23,41 @@
                     <div class="form-group">
                         <label>Status</label>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="status_submitted" checked>
+                            <input class="form-check-input filter-status" type="checkbox" id="status_submitted" value="submitted" checked>
                             <label class="form-check-label" for="status_submitted">Submitted</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="status_under_review" checked>
+                            <input class="form-check-input filter-status" type="checkbox" id="status_under_review" value="under review" checked>
                             <label class="form-check-label" for="status_under_review">Under Review</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="status_interview" checked>
+                            <input class="form-check-input filter-status" type="checkbox" id="status_interview" value="interview scheduled" checked>
                             <label class="form-check-label" for="status_interview">Interview Scheduled</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input filter-status" type="checkbox" id="status_accepted" value="accepted" checked>
+                            <label class="form-check-label" for="status_accepted">Accepted</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input filter-status" type="checkbox" id="status_rejected" value="rejected" checked>
+                            <label class="form-check-label" for="status_rejected">Rejected</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input filter-status" type="checkbox" id="status_more_info" value="more info required" checked>
+                            <label class="form-check-label" for="status_more_info">More Info Required</label>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label>Program</label>
-                        <select class="form-control signin-form-control">
+                        <label for="filter_program">Program</label>
+                        <select class="form-control signin-form-control" id="filter_program">
                             <option value="">All Programs</option>
-                            <option value="computer_science">Computer Science</option>
-                            <option value="data_science">Data Science</option>
-                            <option value="information_technology">Information Technology</option>
+                            <option value="Computer Science">Computer Science</option>
+                            <option value="Data Science">Data Science</option>
+                            <option value="Information Technology">Information Technology</option>
+                            <option value="Cybersecurity">Cybersecurity</option>
                         </select>
                     </div>
-                    <button class="btn btn-block signin-btn">Apply Filters</button>
+                    <button class="btn btn-block signin-btn" id="apply_filters_btn">Apply Filters</button>
                 </div>
             </div>
         </div>
@@ -67,10 +80,10 @@
                                     <th>Actions</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="applications_table_body">
                                 {% for app in applications %}
-                                <tr>
-                                    <td>{{ app.applicationID }}</td>
+                                <tr data-program="{{ app.program }}" data-status="{{ app.status }}">
+                                    <td>{{ app.applicationID|string|truncate(8, True, '') }}</td>
                                     <td>{{ app.student_name }}</td>
                                     <td>{{ app.program }}</td>
                                     <td>
@@ -84,13 +97,19 @@
                                             <span class="badge badge-success">Accepted</span>
                                         {% elif app.status == 'rejected' %}
                                             <span class="badge badge-danger">Rejected</span>
+                                        {% elif app.status == 'more info required' %}
+                                            <span class="badge badge-secondary">More Info</span>
+                                        {% else %}
+                                            <span class="badge badge-light">{{ app.status|capitalize }}</span>
                                         {% endif %}
                                     </td>
-                                    <td>{{ app.submission_date }}</td>
+                                    <td>{{ app.submission_date.strftime('%Y-%m-%d') }}</td>
                                     <td>
-                                        <a href="/review-application/{{ app.applicationID }}" class="btn btn-sm btn-info">Review</a>
+                                        <a href="{{ url_for('review_application_form', application_id=app.applicationID) }}" class="btn btn-sm btn-info">Review</a>
                                     </td>
                                 </tr>
+                                {% else %}
+                                <tr><td colspan="6">No applications found.</td></tr>
                                 {% endfor %}
                             </tbody>
                         </table>

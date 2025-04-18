@@ -52,21 +52,21 @@ def require_role(role):
 
 @app.get('/')
 def index():
-    return render_template('index.html', active_page='home')
+    return render_template('index/index.html', active_page='home')
 
 @app.get('/signin')
 def signin():
     if 'userID' in session:
         flash('You are already signed in.', 'danger')
         return redirect(url_for('profile'))
-    return render_template('signin.html', active_page='signin')
+    return render_template('user/signin.html', active_page='signin')
 
 @app.get('/signup')
 def signup():
     if 'userID' in session:
         flash('You are already signed in.', 'danger')
         return redirect(url_for('profile'))
-    return render_template('signup.html', active_page='signup')
+    return render_template('user/signup.html', active_page='signup')
 
 @app.get('/profile')
 def profile():
@@ -75,7 +75,7 @@ def profile():
         return redirect('/')
     userID = session.get('userID')
     user_data = user_repository.get_user_profile_data(userID)
-    return render_template('profile.html', user=user_data, active_page='profile')
+    return render_template('user/profile.html', user=user_data, active_page='profile')
 
 @app.get('/logout')
 def logout():
@@ -91,7 +91,7 @@ def edit_profile():
     
     userID = session.get('userID')
     user = user_repository.get_user_by_id(userID)
-    return render_template('editprofile.html', user=user, active_page='profile')
+    return render_template('user/editprofile.html', user=user, active_page='profile')
 
 @app.post('/signup')
 def signup_account():
@@ -136,7 +136,7 @@ def signin_account():
     user = user_repository.get_user_by_email(email)
     if user is None or not bcrypt.check_password_hash(user['hashed_password'], password):
         flash('Invalid email or password.', 'danger')
-        return render_template('signin.html', active_page='signin')  
+        return render_template('user/signin.html', active_page='signin')  
     else:
         session['userID'] = user['userID']
         flash('You have successfully signed in.', 'success')
@@ -158,7 +158,7 @@ def update_profile():
         flash('Name is required.', 'danger')
         # Fetch user data again for rendering the template
         user = user_repository.get_user_by_id(userID)
-        return render_template('editprofile.html', user=user, active_page='profile')
+        return render_template('user/editprofile.html', user=user, active_page='profile')
     
     # Validate and convert age
     age = None
@@ -168,11 +168,11 @@ def update_profile():
             if age <= 0:  # Basic validation
                 flash('Please enter a valid age.', 'danger')
                 user = user_repository.get_user_by_id(userID)
-                return render_template('editprofile.html', user=user, active_page='profile')
+                return render_template('user/editprofile.html', user=user, active_page='profile')
         except ValueError:
             flash('Age must be a number.', 'danger')
             user = user_repository.get_user_by_id(userID)
-            return render_template('editprofile.html', user=user, active_page='profile')
+            return render_template('user/editprofile.html', user=user, active_page='profile')
     
     # Pass age to the update function
     updated_user = user_repository.update_user(userID, name, phone, address, age)
@@ -192,7 +192,7 @@ def apply_form():
         return restrict
 
     userID = session.get('userID')
-    return render_template('apply.html', active_page='apply')
+    return render_template('application/apply.html', active_page='apply')
 
 @app.post('/apply')
 def submit_application():
@@ -261,7 +261,7 @@ def application_status():
     if application and application['status'] == 'interview scheduled':
         interviews = interview_repository.get_interviews_for_application(application['applicationid'])
 
-    return render_template('application_status.html',
+    return render_template('application/application_status.html',
                            application=application,
                            feedback=feedback,
                            interviews=interviews,
@@ -280,7 +280,7 @@ def upload_documents_form(application_id):
 
     documents = document_repository.get_documents_by_application(application_id)
 
-    return render_template('upload_documents.html',
+    return render_template('application/upload_documents.html',
                            application=application,
                            documents=documents,
                            active_page='documents')
@@ -392,7 +392,7 @@ def officer_dashboard():
     # Fetch interviews scheduled for this officer
     scheduled_interviews = interview_repository.get_scheduled_interviews_for_officer(officer_id)
 
-    return render_template('officer_dashboard.html',
+    return render_template('admin/officer_dashboard.html',
                            applications=applications,
                            scheduled_interviews=scheduled_interviews, # Pass interviews to template
                            active_page='officer_dashboard')
@@ -413,7 +413,7 @@ def review_application_form(application_id):
 
     statuses = ['submitted', 'under review', 'interview scheduled', 'accepted', 'rejected', 'more info required']
 
-    return render_template('review_application.html',
+    return render_template('application/review_application.html',
                            application=application,
                            documents=documents,
                            feedback=feedback,
@@ -460,7 +460,7 @@ def schedule_interview_form(application_id):
         flash('Application not found.', 'danger')
         return redirect(url_for('officer_dashboard'))
 
-    return render_template('schedule_interview.html',
+    return render_template('application/interview/schedule_interview.html',
                            application=application,
                            active_page='officer_dashboard')
 
@@ -529,14 +529,14 @@ def view_interview(interview_id):
             else:
                 flash('Failed to update interview status.', 'danger')
         # Re-render the same page after POST to show updated status or errors
-        return render_template('view_interview.html',
+        return render_template('application/interview/view_interview.html',
                                interview=interview,
                                application=application,
                                student=student,
                                active_page='officer_dashboard')
 
     # GET request
-    return render_template('view_interview.html',
+    return render_template('application/interview/view_interview.html',
                            interview=interview,
                            application=application,
                            student=student,
@@ -551,7 +551,7 @@ def admin_dashboard():
     stats = application_repository.get_application_stats()
     recent_apps = application_repository.get_all_applications()[:10]
 
-    return render_template('admin_dashboard.html',
+    return render_template('admin/admin_dashboard.html',
                            stats=stats,
                            recent_apps=recent_apps,
                            active_page='admin_dashboard')
@@ -562,7 +562,7 @@ def generate_report_form():
     if restrict:
         return restrict
 
-    return render_template('generate_report.html', active_page='admin_dashboard')
+    return render_template('report/generate_report.html', active_page='admin_dashboard')
 
 @app.post('/generate-report')
 def generate_report():
@@ -586,14 +586,14 @@ def generate_report():
         return redirect(url_for('generate_report_form'))
 
     report_data = None
-    template_name = 'report_result.html'
+    template_name = 'report/report_result.html'
 
     if report_type == 'summary':
         report_data = application_repository.get_application_stats(start_date, end_date)
-        template_name = 'report_summary.html'
+        template_name = 'report/report_summary.html'
     elif report_type == 'detailed_list':
         report_data = application_repository.get_applications_by_date_range(start_date, end_date)
-        template_name = 'report_detailed.html'
+        template_name = 'report/report_detailed.html'
     else:
         flash('Invalid report type selected.', 'danger')
         return redirect(url_for('generate_report_form'))
@@ -633,7 +633,7 @@ This link will expire in 1 hour.
 
         return redirect(url_for('signin'))
 
-    return render_template('forgot_password.html', active_page='signin')
+    return render_template('user/forgot_password.html', active_page='signin')
 
 @app.route('/reset-password/<token>', methods=['GET', 'POST'])
 def reset_password(token):
@@ -652,11 +652,11 @@ def reset_password(token):
 
         if not new_password or not confirm_password:
              flash('Both password fields are required.', 'danger')
-             return render_template('reset_password.html', token=token, active_page='signin')
+             return render_template('user/reset_password.html', token=token, active_page='signin')
 
         if new_password != confirm_password:
             flash('Passwords do not match.', 'danger')
-            return render_template('reset_password.html', token=token, active_page='signin')
+            return render_template('user/reset_password.html', token=token, active_page='signin')
 
         hashed_password = bcrypt.generate_password_hash(new_password).decode('utf-8')
 
@@ -665,9 +665,9 @@ def reset_password(token):
             return redirect(url_for('signin'))
         else:
             flash('An error occurred while updating your password.', 'danger')
-            return render_template('reset_password.html', token=token, active_page='signin')
+            return render_template('user/reset_password.html', token=token, active_page='signin')
 
-    return render_template('reset_password.html', token=token, active_page='signin')
+    return render_template('user/reset_password.html', token=token, active_page='signin')
 
 # --- Admin User Management Routes ---
 
@@ -678,7 +678,7 @@ def admin_list_users():
         return restrict
 
     users = user_repository.get_all_users()
-    return render_template('admin_users.html', users=users, active_page='admin_dashboard')
+    return render_template('admin/admin_users.html', users=users, active_page='admin_dashboard')
 
 @app.route('/admin/user/<uuid:user_id>/edit', methods=['GET', 'POST'])
 def admin_edit_user(user_id):
@@ -709,14 +709,14 @@ def admin_edit_user(user_id):
                 flash('Failed to update user role.', 'danger')
 
         # Re-render form on POST error
-        return render_template('admin_edit_user.html',
+        return render_template('admin/admin_edit_user.html',
                                user=user_to_edit,
                                allowed_roles=allowed_roles,
                                active_page='admin_dashboard')
 
     # GET request
     allowed_roles = ['student', 'officer', 'admin']
-    return render_template('admin_edit_user.html',
+    return render_template('admin/admin_edit_user.html',
                            user=user_to_edit,
                            allowed_roles=allowed_roles,
                            active_page='admin_dashboard')
