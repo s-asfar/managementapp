@@ -1,0 +1,30 @@
+<!-- filepath: c:\Users\Seif1\OneDrive - University of North Carolina at Charlotte\Documents\code classes\itis6112\managementapp\templates\admin_edit_user.html -->
+{% extends "_layout.html" %}
+{% block content %}
+<div class="container mt-5">
+    <div class="col-md-6 offset-md-3">
+        <div class="card signin-card">
+            <div class="card-header signin-card-header">
+                <h3 class="text-center">Edit User Role</h3>
+                <p class="text-center text-white">User: {{ user.email }}</p>
+            </div>
+            <div class="card-body">
+                <form action="{{ url_for('admin_edit_user', user_id=user.userid) }}" method="POST">
+                    <div class="form-group">
+                        <label for="role" class="signin-form-label">Role:</label>
+                        <select class="form-control signin-form-control custom-select" id="role" name="role" required>
+                            {% for role_option in allowed_roles %}
+                            <option value="{{ role_option }}" {% if user.role == role_option %}selected{% endif %}>
+                                {{ role_option|capitalize }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-block signin-btn">Update Role</button>
+                    <a href="{{ url_for('admin_list_users') }}" class="btn btn-secondary btn-block mt-2">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

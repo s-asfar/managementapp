@@ -12,8 +12,7 @@
                     <div class="nav flex-column">
                         <a class="nav-link active" href="{{ url_for('admin_dashboard') }}">Dashboard</a>
                         <a class="nav-link" href="{{ url_for('generate_report_form') }}">Generate Reports</a>
-                        <!-- Add links for user management, settings etc. later -->
-                        <a class="nav-link" href="#">User Management</a>
+                        <a class="nav-link" href="{{ url_for('admin_list_users') }}">User Management</a>
                         <a class="nav-link" href="#">System Settings</a>
                     </div>
                 </div>

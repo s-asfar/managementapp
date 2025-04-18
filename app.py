@@ -18,16 +18,13 @@ app = Flask(__name__)
 bcrypt = Bcrypt(app)
 app.secret_key = os.getenv('APP_SECRET_KEY', 'fallback_secret_key_123')
 
-# Configure upload folder and allowed extensions
 UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg', 'doc', 'docx'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024  # 10 MB limit
 
-# Ensure upload folder exists
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
-# Mail Configuration
 app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER')
 app.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT', 587))
 app.config['MAIL_USE_TLS'] = os.getenv('MAIL_USE_TLS', 'True').lower() == 'true'
@@ -234,7 +231,7 @@ def submit_application():
     if new_app:
         flash('Application submitted successfully! Please upload required documents.', 'success')
         # Redirect to document upload page for the new application
-        return redirect(url_for('upload_documents_form', application_id=new_app['applicationid']))
+        return redirect(url_for('upload_documents_form', application_id=new_app['applicationID']))
     else:
         flash('An error occurred while submitting the application.', 'danger')
         return redirect(url_for('apply_form'))
@@ -252,11 +249,17 @@ def application_status():
         flash('You have not submitted an application yet.', 'info')
         return redirect(url_for('apply_form'))
 
-    application = application_repository.get_application_by_id(applications[0]['applicationID'])
-    feedback = application_repository.get_feedback_for_application(application['applicationID']) if application else []
+    application_id = applications[0]['applicationid']
+    application = application_repository.get_application_by_id(application_id)
+
+    if not application:
+         flash('Error retrieving application details.', 'danger')
+         return redirect(url_for('profile'))
+
+    feedback = application_repository.get_feedback_for_application(application['applicationid'])
     interviews = []
     if application and application['status'] == 'interview scheduled':
-        interviews = interview_repository.get_interviews_for_application(application['applicationID'])
+        interviews = interview_repository.get_interviews_for_application(application['applicationid'])
 
     return render_template('application_status.html',
                            application=application,
@@ -345,7 +348,7 @@ def delete_document(document_id):
         flash('Document not found.', 'danger')
         return redirect(url_for('profile'))
 
-    application = application_repository.get_application_by_id(doc['applicationid'])
+    application = application_repository.get_application_by_id(doc['applicationID'])
     if not application or application['userid'] != session['userID']:
         flash('You do not have permission to delete this document.', 'danger')
         return redirect(url_for('profile'))
@@ -361,7 +364,7 @@ def delete_document(document_id):
     else:
         flash('Failed to delete document record.', 'danger')
 
-    return redirect(url_for('upload_documents_form', application_id=doc['applicationid']))
+    return redirect(url_for('upload_documents_form', application_id=doc['applicationID']))
 
 @app.get('/uploads/<filename>')
 def uploaded_file(filename):
@@ -384,10 +387,14 @@ def officer_dashboard():
     if restrict:
         return restrict
 
+    officer_id = session['userID'] # Get current officer's ID
     applications = application_repository.get_all_applications()
+    # Fetch interviews scheduled for this officer
+    scheduled_interviews = interview_repository.get_scheduled_interviews_for_officer(officer_id)
 
     return render_template('officer_dashboard.html',
                            applications=applications,
+                           scheduled_interviews=scheduled_interviews, # Pass interviews to template
                            active_page='officer_dashboard')
 
 @app.get('/review-application/<uuid:application_id>')
@@ -488,6 +495,52 @@ def schedule_interview_post(application_id):
     else:
         flash('Failed to schedule interview.', 'danger')
         return redirect(url_for('schedule_interview_form', application_id=application_id))
+
+@app.route('/view-interview/<uuid:interview_id>', methods=['GET', 'POST'])
+def view_interview(interview_id):
+    restrict = require_role('officer')
+    if restrict:
+        return restrict
+
+    officer_id = session['userID']
+    interview = interview_repository.get_interview_by_id(interview_id)
+
+    # Security check: Ensure the interview exists and belongs to this officer
+    if not interview or interview['officerid'] != officer_id:
+        flash('Interview not found or you do not have permission to view it.', 'danger')
+        return redirect(url_for('officer_dashboard'))
+
+    # Fetch related application and student info for display
+    application = application_repository.get_application_by_id(interview['applicationid'])
+    student = user_repository.get_user_by_id(application['userid']) if application else None
+
+    if request.method == 'POST':
+        new_status = request.form.get('status')
+        notes = request.form.get('notes', interview.get('notes')) # Keep existing notes if not updated
+
+        if not new_status or new_status not in ['scheduled', 'completed', 'cancelled']:
+            flash('Invalid status selected.', 'danger')
+        else:
+            updated = interview_repository.update_interview_status(interview_id, new_status, notes)
+            if updated:
+                flash(f'Interview status updated to {new_status}.', 'success')
+                # Fetch the updated interview data to display
+                interview = interview_repository.get_interview_by_id(interview_id)
+            else:
+                flash('Failed to update interview status.', 'danger')
+        # Re-render the same page after POST to show updated status or errors
+        return render_template('view_interview.html',
+                               interview=interview,
+                               application=application,
+                               student=student,
+                               active_page='officer_dashboard')
+
+    # GET request
+    return render_template('view_interview.html',
+                           interview=interview,
+                           application=application,
+                           student=student,
+                           active_page='officer_dashboard')
 
 @app.get('/admin-dashboard')
 def admin_dashboard():
@@ -615,6 +668,87 @@ def reset_password(token):
             return render_template('reset_password.html', token=token, active_page='signin')
 
     return render_template('reset_password.html', token=token, active_page='signin')
+
+# --- Admin User Management Routes ---
+
+@app.get('/admin/users')
+def admin_list_users():
+    restrict = require_role('admin')
+    if restrict:
+        return restrict
+
+    users = user_repository.get_all_users()
+    return render_template('admin_users.html', users=users, active_page='admin_dashboard')
+
+@app.route('/admin/user/<uuid:user_id>/edit', methods=['GET', 'POST'])
+def admin_edit_user(user_id):
+    restrict = require_role('admin')
+    if restrict:
+        return restrict
+
+    user_to_edit = user_repository.get_user_by_id(user_id)
+    if not user_to_edit:
+        flash('User not found.', 'danger')
+        return redirect(url_for('admin_list_users'))
+
+    if request.method == 'POST':
+        new_role = request.form.get('role')
+        allowed_roles = ['student', 'officer', 'admin']
+
+        if not new_role or new_role not in allowed_roles:
+            flash('Invalid role selected.', 'danger')
+        # Prevent admin from accidentally demoting themselves if they are the only admin (optional check)
+        elif user_id == session['userID'] and new_role != 'admin':
+             flash('You cannot change your own role.', 'warning')
+        else:
+            updated = user_repository.update_user_role(user_id, new_role)
+            if updated:
+                flash(f"User {user_to_edit['email']}'s role updated to {new_role}.", 'success')
+                return redirect(url_for('admin_list_users'))
+            else:
+                flash('Failed to update user role.', 'danger')
+
+        # Re-render form on POST error
+        return render_template('admin_edit_user.html',
+                               user=user_to_edit,
+                               allowed_roles=allowed_roles,
+                               active_page='admin_dashboard')
+
+    # GET request
+    allowed_roles = ['student', 'officer', 'admin']
+    return render_template('admin_edit_user.html',
+                           user=user_to_edit,
+                           allowed_roles=allowed_roles,
+                           active_page='admin_dashboard')
+
+@app.post('/admin/user/<uuid:user_id>/delete')
+def admin_delete_user(user_id):
+    restrict = require_role('admin')
+    if restrict:
+        return restrict
+
+    # Critical check: Prevent admin from deleting themselves
+    if user_id == session['userID']:
+        flash('You cannot delete your own account.', 'danger')
+        return redirect(url_for('admin_list_users'))
+
+    user_to_delete = user_repository.get_user_by_id(user_id)
+    if not user_to_delete:
+         flash('User not found.', 'danger')
+         return redirect(url_for('admin_list_users'))
+
+    # Add extra confirmation step here if desired (e.g., type username)
+
+    # Perform deletion (BE CAREFUL - consider related data implications)
+    deleted = user_repository.delete_user(user_id)
+    if deleted:
+        flash(f"User {user_to_delete.get('email', user_id)} deleted successfully.", 'success')
+    else:
+        flash(f"Failed to delete user {user_to_delete.get('email', user_id)}. Check logs for details.", 'danger')
+
+    return redirect(url_for('admin_list_users'))
+
+# --- End Admin User Management Routes ---
 
 if __name__ == '__main__':
     app.run(debug=True, port=5001)

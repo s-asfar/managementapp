@@ -4,7 +4,7 @@
         <div class="col-md-8 offset-md-2">
             <div class="card signin-card">
                 <div class="card-header signin-card-header">
-                    <h3 class="text-center">Upload Documents for Application #{{ application.applicationID|string|truncate(8, True, '') }}</h3>
+                    <h3 class="text-center">Upload Documents for Application #{{ application.applicationid|string|truncate(8, True, '') }}</h3>
                     <p class="text-center text-white">Program: {{ application.program }}</p>
                 </div>
                 <div class="card-body">
@@ -50,8 +50,31 @@
 
                     <h4>Upload New Document</h4>
                     <!-- Pass application_id in the form action -->
-                    <form action="{{ url_for('upload_documents', application_id=application.applicationID) }}" method="POST" enctype="multipart/form-data">
-                        <!-- ... form fields ... -->
+                    <form action="{{ url_for('upload_documents', application_id=application.applicationid) }}" method="POST" enctype="multipart/form-data">
+                        
+                        <!-- Add these form fields -->
+                        <div class="form-group">
+                            <label for="document_name" class="signin-form-label">Document Name:</label>
+                            <input type="text" class="form-control signin-form-control" id="document_name" name="document_name" placeholder="e.g., Undergraduate Transcript, Resume" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="document_type" class="signin-form-label">Document Type:</label>
+                            <select class="form-control signin-form-control custom-select" id="document_type" name="document_type" required>
+                                <option value="" disabled selected>Select Type</option>
+                                <option value="transcript">Transcript</option>
+                                <option value="resume">Resume/CV</option>
+                                <option value="statement">Personal Statement</option>
+                                <option value="recommendation">Recommendation Letter</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="document_file" class="signin-form-label">Select File:</label>
+                            <input type="file" class="form-control-file signin-form-control" id="document_file" name="document_file" required>
+                            <small class="form-text text-muted">Allowed types: pdf, png, jpg, jpeg, doc, docx. Max size: 10MB.</small>
+                        </div>
+                        <!-- End of added fields -->
+
                         <button type="submit" class="btn btn-block signin-btn">Upload Document</button>
                     </form>
                 </div>

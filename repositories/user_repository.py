@@ -1,5 +1,5 @@
 import uuid
-from typing import Any
+from typing import Any, List
 from repositories.db import get_pool
 from psycopg.rows import dict_row
 from flask_bcrypt import Bcrypt # Add this import if not already present
@@ -126,5 +126,59 @@ def update_password(email: str, new_hashed_password: str) -> bool:
                 return cur.rowcount > 0
             except Exception as e:
                 print(f"Error updating password: {e}")
+                conn.rollback()
+                return False
+
+def get_all_users() -> List[dict[str, Any]]:
+    """Fetches all users from the database."""
+    pool = get_pool()
+    with pool.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as cur:
+            cur.execute('''
+                SELECT userID, email, name, role, date_created
+                FROM Users
+                ORDER BY date_created DESC
+            ''')
+            users = cur.fetchall()
+            return users if users else []
+
+def update_user_role(user_id: uuid.UUID, new_role: str) -> bool:
+    """Updates the role of a specific user."""
+    pool = get_pool()
+    # Basic validation for allowed roles
+    if new_role not in ['student', 'officer', 'admin']:
+        print(f"Error: Invalid role '{new_role}' provided for update.")
+        return False
+
+    with pool.connection() as conn:
+        with conn.cursor() as cur:
+            try:
+                cur.execute('''
+                    UPDATE Users
+                    SET role = %s
+                    WHERE userID = %s
+                ''', (new_role, user_id))
+                # Check if the update affected any row
+                return cur.rowcount > 0
+            except Exception as e:
+                print(f"Error updating user role: {e}")
+                conn.rollback()
+                return False
+
+def delete_user(user_id: uuid.UUID) -> bool:
+    """Deletes a user from the database. USE WITH CAUTION."""
+    # WARNING: This is a hard delete. Consider soft delete (marking as inactive)
+    # Also, consider implications for related data (applications, feedback, etc.)
+    # You might need to handle foreign key constraints (e.g., set related fields to NULL or cascade delete)
+    pool = get_pool()
+    with pool.connection() as conn:
+        with conn.cursor() as cur:
+            try:
+                # Example: If you need to delete related applications first (adjust based on your FK constraints)
+                # cur.execute("DELETE FROM Applications WHERE userID = %s", (user_id,))
+                cur.execute("DELETE FROM Users WHERE userID = %s", (user_id,))
+                return cur.rowcount > 0
+            except Exception as e:
+                print(f"Error deleting user {user_id}: {e}")
                 conn.rollback()
                 return False
