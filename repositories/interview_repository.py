@@ -16,7 +16,6 @@ def schedule_interview(application_id: uuid.UUID, officer_id: uuid.UUID, schedul
                     RETURNING interviewID, applicationID, schedule_date, status
                 ''', (interview_id, application_id, officer_id, schedule_date, location, notes, 'scheduled'))
                 new_interview = cur.fetchone()
-                # Optionally update application status
                 cur.execute("UPDATE Applications SET status = 'interview scheduled', last_updated = CURRENT_TIMESTAMP WHERE applicationID = %s", (application_id,))
                 return new_interview
             except Exception as e:

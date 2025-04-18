@@ -8,12 +8,11 @@
                     <p class="text-center text-white">Program: {{ application.program }}</p>
                 </div>
                 <div class="card-body">
-                    <!-- ... alert info ... -->
 
-                    <div class="uploaded-documents mb-4"> <!-- Added margin -->
+                    <div class="uploaded-documents mb-4">
                         <h4>Uploaded Documents</h4>
                         {% if documents %}
-                        <table class="table table-dark table-sm"> <!-- Added table-sm -->
+                        <table class="table table-dark table-sm"> 
                             <thead>
                                 <tr>
                                     <th>Document Name</th>
@@ -26,13 +25,11 @@
                                 {% for doc in documents %}
                                 <tr>
                                     <td>
-                                        <!-- Link to view/download the file -->
                                         <a href="{{ url_for('uploaded_file', filename=doc.file_path.split('/')[-1]) }}" target="_blank">{{ doc.document_name }}</a>
                                     </td>
                                     <td>{{ doc.document_type|capitalize }}</td>
                                     <td>{{ doc.upload_date.strftime('%Y-%m-%d %H:%M') }}</td>
                                     <td>
-                                        <!-- Delete Form -->
                                         <form action="{{ url_for('delete_document', document_id=doc.documentID) }}" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this document?');">
                                             <button type="submit" class="btn btn-sm btn-danger">Delete</button>
                                         </form>
@@ -49,10 +46,8 @@
                     <div class="card-divider"></div>
 
                     <h4>Upload New Document</h4>
-                    <!-- Pass application_id in the form action -->
                     <form action="{{ url_for('upload_documents', application_id=application.applicationid) }}" method="POST" enctype="multipart/form-data">
                         
-                        <!-- Add these form fields -->
                         <div class="form-group">
                             <label for="document_name" class="signin-form-label">Document Name:</label>
                             <input type="text" class="form-control signin-form-control" id="document_name" name="document_name" placeholder="e.g., Undergraduate Transcript, Resume" required>
@@ -73,7 +68,6 @@
                             <input type="file" class="form-control-file signin-form-control" id="document_file" name="document_file" required>
                             <small class="form-text text-muted">Allowed types: pdf, png, jpg, jpeg, doc, docx. Max size: 10MB.</small>
                         </div>
-                        <!-- End of added fields -->
 
                         <button type="submit" class="btn btn-block signin-btn">Upload Document</button>
                     </form>

@@ -39,7 +39,6 @@ def delete_document(document_id: uuid.UUID) -> bool:
     with pool.connection() as conn:
         with conn.cursor() as cur:
             try:
-                # Consider also deleting the file from the filesystem here
                 cur.execute('''
                     DELETE FROM Documents WHERE documentID = %s
                 ''', (document_id,))

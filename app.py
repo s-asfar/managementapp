@@ -5,10 +5,7 @@ from flask import Flask, g, render_template, redirect, request, url_for, session
 from flask_bcrypt import Bcrypt
 from datetime import datetime, timedelta
 from werkzeug.utils import secure_filename
-from flask_mail import Mail, Message
-from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadTimeSignature
 
-# Import repositories
 from repositories import user_repository, application_repository, document_repository, interview_repository
 from datetime import date
 
@@ -21,19 +18,10 @@ app.secret_key = os.getenv('APP_SECRET_KEY', 'fallback_secret_key_123')
 UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg', 'doc', 'docx'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024  # 10 MB limit
+app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024
 
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
-app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER')
-app.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT', 587))
-app.config['MAIL_USE_TLS'] = os.getenv('MAIL_USE_TLS', 'True').lower() == 'true'
-app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
-app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
-app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_DEFAULT_SENDER')
-
-mail = Mail(app)
-serializer = URLSafeTimedSerializer(app.secret_key)
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -43,7 +31,7 @@ def require_role(role):
     if 'userID' not in session:
         flash('You must be signed in to access this page.', 'danger')
         return redirect(url_for('signin'))
-    
+
     user = user_repository.get_user_by_id(session['userID'])
     if not user or user.get('role') != role:
         flash('You do not have permission to access this page.', 'danger')
@@ -88,7 +76,7 @@ def edit_profile():
     if 'userID' not in session:
         flash('You must be signed in to edit your profile.', 'danger')
         return redirect('/')
-    
+
     userID = session.get('userID')
     user = user_repository.get_user_by_id(userID)
     return render_template('user/editprofile.html', user=user, active_page='profile')
@@ -98,32 +86,30 @@ def signup_account():
     if 'userID' in session:
         flash('You are already logged in.', 'danger')
         return redirect(url_for('profile'))
-    
+
     email = request.form.get('email').lower()
     password = request.form.get('password')
-    role = request.form.get('role', 'student')  # Default to student role
-    
+    role = request.form.get('role', 'student')
+
     if not email or not password:
         flash('Email and password are required.', 'danger')
         return redirect(url_for('signup'))
-    
-    # Validate role
+
     if role not in ['student', 'officer', 'admin']:
         flash('Invalid role selection.', 'danger')
         return redirect(url_for('signup'))
-    
+
     does_user_exist = user_repository.does_email_exist(email)
     if does_user_exist:
         flash('User with this email already exists.', 'danger')
         return redirect(url_for('signup'))
-    
+
     hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
     user_repository.create_user(email, hashed_password, role)
     user = user_repository.get_user_by_email(email)
     session['userID'] = user['userID']
-    session['role'] = user['role']  # Store role in session as well
+    session['role'] = user['role']
     flash('Account created successfully! Please complete your profile.', 'success')
-    # Redirect to edit profile instead of main profile
     return redirect(url_for('edit_profile'))
 
 @app.post('/signin')
@@ -131,12 +117,12 @@ def signin_account():
     if 'userID' in session:
         flash('You are already logged in.', 'danger')
         return redirect(url_for('profile'))
-    email = request.form.get('email').lower() 
+    email = request.form.get('email').lower()
     password = request.form.get('password')
     user = user_repository.get_user_by_email(email)
     if user is None or not bcrypt.check_password_hash(user['hashed_password'], password):
         flash('Invalid email or password.', 'danger')
-        return render_template('user/signin.html', active_page='signin')  
+        return render_template('user/signin.html', active_page='signin')
     else:
         session['userID'] = user['userID']
         flash('You have successfully signed in.', 'success')
@@ -147,25 +133,23 @@ def update_profile():
     if 'userID' not in session:
         flash('You must be signed in to edit your profile.', 'danger')
         return redirect('/')
-    
+
     userID = session.get('userID')
     name = request.form.get('name')
     phone = request.form.get('phone')
     address = request.form.get('address')
-    age_str = request.form.get('age')  # Get age as string
-    
+    age_str = request.form.get('age')
+
     if not name:
         flash('Name is required.', 'danger')
-        # Fetch user data again for rendering the template
         user = user_repository.get_user_by_id(userID)
         return render_template('user/editprofile.html', user=user, active_page='profile')
-    
-    # Validate and convert age
+
     age = None
     if age_str:
         try:
             age = int(age_str)
-            if age <= 0:  # Basic validation
+            if age <= 0:
                 flash('Please enter a valid age.', 'danger')
                 user = user_repository.get_user_by_id(userID)
                 return render_template('user/editprofile.html', user=user, active_page='profile')
@@ -173,21 +157,19 @@ def update_profile():
             flash('Age must be a number.', 'danger')
             user = user_repository.get_user_by_id(userID)
             return render_template('user/editprofile.html', user=user, active_page='profile')
-    
-    # Pass age to the update function
+
     updated_user = user_repository.update_user(userID, name, phone, address, age)
-    
+
     if updated_user is None:
         flash('An error occurred while updating the profile.', 'danger')
     else:
         flash('Profile updated successfully!', 'success')
-    
-    # Redirect to the main profile page after updating
+
     return redirect(url_for('profile'))
 
 @app.get('/apply')
 def apply_form():
-    restrict = require_role('student')  # Use require_role for students too
+    restrict = require_role('student')
     if restrict:
         return restrict
 
@@ -208,7 +190,6 @@ def submit_application():
     statement = request.form.get('statement')
     prereqs = request.form.get('prerequisites')
 
-    # Basic Validation
     if not all([program, education, institution, gpa_str, statement, prereqs]):
         flash('All application fields are required.', 'danger')
         return redirect(url_for('apply_form'))
@@ -223,15 +204,13 @@ def submit_application():
 
     prerequisites_completed = True if prereqs == 'yes' else False
 
-    # Save to DB using repository
     new_app = application_repository.create_application(
         userID, program, education, institution, gpa, statement, prerequisites_completed
     )
 
     if new_app:
         flash('Application submitted successfully! Please upload required documents.', 'success')
-        # Redirect to document upload page for the new application
-        return redirect(url_for('upload_documents_form', application_id=new_app['applicationID']))
+        return redirect(url_for('upload_documents_form', application_id=new_app['applicationid']))
     else:
         flash('An error occurred while submitting the application.', 'danger')
         return redirect(url_for('apply_form'))
@@ -348,7 +327,7 @@ def delete_document(document_id):
         flash('Document not found.', 'danger')
         return redirect(url_for('profile'))
 
-    application = application_repository.get_application_by_id(doc['applicationID'])
+    application = application_repository.get_application_by_id(doc['applicationid'])
     if not application or application['userid'] != session['userID']:
         flash('You do not have permission to delete this document.', 'danger')
         return redirect(url_for('profile'))
@@ -364,7 +343,7 @@ def delete_document(document_id):
     else:
         flash('Failed to delete document record.', 'danger')
 
-    return redirect(url_for('upload_documents_form', application_id=doc['applicationID']))
+    return redirect(url_for('upload_documents_form', application_id=doc['applicationid']))
 
 @app.get('/uploads/<filename>')
 def uploaded_file(filename):
@@ -387,14 +366,13 @@ def officer_dashboard():
     if restrict:
         return restrict
 
-    officer_id = session['userID'] # Get current officer's ID
+    officer_id = session['userID']
     applications = application_repository.get_all_applications()
-    # Fetch interviews scheduled for this officer
     scheduled_interviews = interview_repository.get_scheduled_interviews_for_officer(officer_id)
 
     return render_template('admin/officer_dashboard.html',
                            applications=applications,
-                           scheduled_interviews=scheduled_interviews, # Pass interviews to template
+                           scheduled_interviews=scheduled_interviews,
                            active_page='officer_dashboard')
 
 @app.get('/review-application/<uuid:application_id>')
@@ -505,18 +483,16 @@ def view_interview(interview_id):
     officer_id = session['userID']
     interview = interview_repository.get_interview_by_id(interview_id)
 
-    # Security check: Ensure the interview exists and belongs to this officer
     if not interview or interview['officerid'] != officer_id:
         flash('Interview not found or you do not have permission to view it.', 'danger')
         return redirect(url_for('officer_dashboard'))
 
-    # Fetch related application and student info for display
     application = application_repository.get_application_by_id(interview['applicationid'])
     student = user_repository.get_user_by_id(application['userid']) if application else None
 
     if request.method == 'POST':
         new_status = request.form.get('status')
-        notes = request.form.get('notes', interview.get('notes')) # Keep existing notes if not updated
+        notes = request.form.get('notes', interview.get('notes'))
 
         if not new_status or new_status not in ['scheduled', 'completed', 'cancelled']:
             flash('Invalid status selected.', 'danger')
@@ -524,18 +500,15 @@ def view_interview(interview_id):
             updated = interview_repository.update_interview_status(interview_id, new_status, notes)
             if updated:
                 flash(f'Interview status updated to {new_status}.', 'success')
-                # Fetch the updated interview data to display
                 interview = interview_repository.get_interview_by_id(interview_id)
             else:
                 flash('Failed to update interview status.', 'danger')
-        # Re-render the same page after POST to show updated status or errors
         return render_template('application/interview/view_interview.html',
                                interview=interview,
                                application=application,
                                student=student,
                                active_page='officer_dashboard')
 
-    # GET request
     return render_template('application/interview/view_interview.html',
                            interview=interview,
                            application=application,
@@ -605,71 +578,6 @@ def generate_report():
                            report_type=report_type,
                            active_page='admin_dashboard')
 
-@app.route('/forgot-password', methods=['GET', 'POST'])
-def forgot_password():
-    if request.method == 'POST':
-        email = request.form.get('email').lower()
-        user = user_repository.get_user_by_email(email)
-
-        if user:
-            token = serializer.dumps(email, salt='password-reset-salt')
-            reset_url = url_for('reset_password', token=token, _external=True)
-
-            msg = Message('Password Reset Request', recipients=[email])
-            msg.body = f'''To reset your password, visit the following link:
-{reset_url}
-
-If you did not make this request then simply ignore this email and no changes will be made.
-This link will expire in 1 hour.
-'''
-            try:
-                mail.send(msg)
-                flash('A password reset link has been sent to your email.', 'success')
-            except Exception as e:
-                print(f"Mail sending error: {e}")
-                flash('Failed to send reset email. Please try again later or contact support.', 'danger')
-        else:
-            flash('Email address not found.', 'danger')
-
-        return redirect(url_for('signin'))
-
-    return render_template('user/forgot_password.html', active_page='signin')
-
-@app.route('/reset-password/<token>', methods=['GET', 'POST'])
-def reset_password(token):
-    try:
-        email = serializer.loads(token, salt='password-reset-salt', max_age=3600)
-    except SignatureExpired:
-        flash('The password reset link has expired.', 'danger')
-        return redirect(url_for('forgot_password'))
-    except BadTimeSignature:
-        flash('Invalid password reset link.', 'danger')
-        return redirect(url_for('forgot_password'))
-
-    if request.method == 'POST':
-        new_password = request.form.get('password')
-        confirm_password = request.form.get('confirm_password')
-
-        if not new_password or not confirm_password:
-             flash('Both password fields are required.', 'danger')
-             return render_template('user/reset_password.html', token=token, active_page='signin')
-
-        if new_password != confirm_password:
-            flash('Passwords do not match.', 'danger')
-            return render_template('user/reset_password.html', token=token, active_page='signin')
-
-        hashed_password = bcrypt.generate_password_hash(new_password).decode('utf-8')
-
-        if user_repository.update_password(email, hashed_password):
-            flash('Your password has been updated successfully!', 'success')
-            return redirect(url_for('signin'))
-        else:
-            flash('An error occurred while updating your password.', 'danger')
-            return render_template('user/reset_password.html', token=token, active_page='signin')
-
-    return render_template('user/reset_password.html', token=token, active_page='signin')
-
-# --- Admin User Management Routes ---
 
 @app.get('/admin/users')
 def admin_list_users():
@@ -697,7 +605,6 @@ def admin_edit_user(user_id):
 
         if not new_role or new_role not in allowed_roles:
             flash('Invalid role selected.', 'danger')
-        # Prevent admin from accidentally demoting themselves if they are the only admin (optional check)
         elif user_id == session['userID'] and new_role != 'admin':
              flash('You cannot change your own role.', 'warning')
         else:
@@ -708,13 +615,11 @@ def admin_edit_user(user_id):
             else:
                 flash('Failed to update user role.', 'danger')
 
-        # Re-render form on POST error
         return render_template('admin/admin_edit_user.html',
                                user=user_to_edit,
                                allowed_roles=allowed_roles,
                                active_page='admin_dashboard')
 
-    # GET request
     allowed_roles = ['student', 'officer', 'admin']
     return render_template('admin/admin_edit_user.html',
                            user=user_to_edit,
@@ -727,7 +632,6 @@ def admin_delete_user(user_id):
     if restrict:
         return restrict
 
-    # Critical check: Prevent admin from deleting themselves
     if user_id == session['userID']:
         flash('You cannot delete your own account.', 'danger')
         return redirect(url_for('admin_list_users'))
@@ -737,9 +641,7 @@ def admin_delete_user(user_id):
          flash('User not found.', 'danger')
          return redirect(url_for('admin_list_users'))
 
-    # Add extra confirmation step here if desired (e.g., type username)
 
-    # Perform deletion (BE CAREFUL - consider related data implications)
     deleted = user_repository.delete_user(user_id)
     if deleted:
         flash(f"User {user_to_delete.get('email', user_id)} deleted successfully.", 'success')
@@ -748,7 +650,6 @@ def admin_delete_user(user_id):
 
     return redirect(url_for('admin_list_users'))
 
-# --- End Admin User Management Routes ---
 
 if __name__ == '__main__':
     app.run(debug=True, port=5001)

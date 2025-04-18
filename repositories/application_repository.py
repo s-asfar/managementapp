@@ -32,7 +32,7 @@ def create_application(
                 new_app = cur.fetchone()
                 return new_app
             except Exception as e:
-                print(f"Error creating application: {e}") # Basic error logging
+                print(f"Error creating application: {e}")
                 conn.rollback()
                 return None
 
@@ -88,7 +88,7 @@ def update_application_status(application_id: uuid.UUID, new_status: str) -> boo
                     SET status = %s, last_updated = CURRENT_TIMESTAMP
                     WHERE applicationID = %s
                 ''', (new_status, application_id))
-                return cur.rowcount > 0 # Check if any row was updated
+                return cur.rowcount > 0
             except Exception as e:
                 print(f"Error updating status: {e}")
                 conn.rollback()
@@ -138,7 +138,6 @@ def get_application_stats(start_date: date = None, end_date: date = None) -> dic
                 filters.append("submission_date >= %s")
                 params.append(start_date)
             if end_date:
-                # Add 1 day to end_date to include the whole day
                 from datetime import timedelta
                 end_date_inclusive = end_date + timedelta(days=1)
                 filters.append("submission_date < %s")
@@ -152,14 +151,12 @@ def get_application_stats(start_date: date = None, end_date: date = None) -> dic
             cur.execute(base_query, params)
             stats_by_status = cur.fetchall()
 
-            # Get total count within the date range
             total_query = "SELECT COUNT(*) as total FROM Applications"
             if filters:
                 total_query += " WHERE " + " AND ".join(filters)
             cur.execute(total_query, params)
             total_count = cur.fetchone()['total']
 
-            # Format stats
             stats = {row['status']: row['count'] for row in stats_by_status}
             stats['total'] = total_count
             return stats

@@ -75,7 +75,6 @@
 
              <div class="mt-4">
                  <a href="{{ url_for('officer_dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
-                 <!-- Add link to schedule interview if status allows -->
                  {% if application.status in ['under review', 'submitted', 'more info required'] %}
                      <a href="{{ url_for('schedule_interview_form', application_id=application.applicationID) }}" class="btn btn-warning">Schedule Interview</a>
                  {% endif %}
