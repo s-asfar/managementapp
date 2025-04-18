@@ -11,8 +11,8 @@
                     <div class="col-md-6">
                         <h4>Application Details</h4>
                         <p><strong>Program:</strong> {{ application.program }}</p>
-                        <p><strong>Submitted On:</strong> {{ application.submission_date }}</p>
-                        <p><strong>Application ID:</strong> {{ application.applicationID }}</p>
+                        <p><strong>Submitted On:</strong> {{ application.submission_date.strftime('%Y-%m-%d %H:%M') }}</p>
+                        <p><strong>Application ID:</strong> {{ application.applicationID|string|truncate(8, True, '') }}</p>
                     </div>
                     <div class="col-md-6">
                         <div class="text-center">
@@ -23,14 +23,14 @@
                                     <p>Your application has been received and is awaiting review.</p>
                                 </div>
                             {% elif application.status == 'under review' %}
-                                <div class="alert alert-primary">
+                                <div class="alert alert-primary" style="background-color: #5533dcb8; color: white; border-color: #5533dcb8;">
                                     <strong>Under Review</strong>
                                     <p>Your application is currently being reviewed by our admissions team.</p>
                                 </div>
                             {% elif application.status == 'interview scheduled' %}
                                 <div class="alert alert-warning">
                                     <strong>Interview Scheduled</strong>
-                                    <p>You have been selected for an interview. Check your email for details.</p>
+                                    <p>You have been selected for an interview. Details below.</p>
                                 </div>
                             {% elif application.status == 'accepted' %}
                                 <div class="alert alert-success">
@@ -40,48 +40,53 @@
                             {% elif application.status == 'rejected' %}
                                 <div class="alert alert-danger">
                                     <strong>Not Selected</strong>
-                                    <p>We regret to inform you that your application was not selected.</p>
+                                    <p>We regret to inform you that your application was not selected at this time.</p>
+                                </div>
+                            {% elif application.status == 'more info required' %}
+                                <div class="alert alert-secondary">
+                                    <strong>More Info Required</strong>
+                                    <p>The admissions office requires additional information. Please check feedback below.</p>
                                 </div>
                             {% endif %}
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="card-divider"></div>
-                
+
                 <h4>Application Timeline</h4>
                 <div class="timeline">
                     <div class="timeline-item">
                         <div class="timeline-marker completed">✓</div>
                         <div class="timeline-content">
                             <h5>Application Submitted</h5>
-                            <p>{{ application.submission_date }}</p>
+                            <p>{{ application.submission_date.strftime('%Y-%m-%d %H:%M') }}</p>
                         </div>
                     </div>
-                    
+
                     <div class="timeline-item">
-                        <div class="timeline-marker {% if application.status != 'submitted' %}completed{% endif %}">
-                            {% if application.status != 'submitted' %}✓{% else %}2{% endif %}
+                        <div class="timeline-marker {% if application.status not in ['submitted'] %}completed{% endif %}">
+                            {% if application.status not in ['submitted'] %}✓{% else %}2{% endif %}
                         </div>
                         <div class="timeline-content">
                             <h5>Under Review</h5>
                             <p>Your application is reviewed by the admissions committee</p>
                         </div>
                     </div>
-                    
+
                     <div class="timeline-item">
-                        <div class="timeline-marker {% if application.status == 'interview scheduled' or application.status == 'accepted' or application.status == 'rejected' %}completed{% endif %}">
-                            {% if application.status == 'interview scheduled' or application.status == 'accepted' or application.status == 'rejected' %}✓{% else %}3{% endif %}
+                        <div class="timeline-marker {% if application.status in ['interview scheduled', 'accepted', 'rejected'] %}completed{% endif %}">
+                            {% if application.status in ['interview scheduled', 'accepted', 'rejected'] %}✓{% else %}3{% endif %}
                         </div>
                         <div class="timeline-content">
                             <h5>Interview</h5>
                             <p>Selected candidates are invited for an interview</p>
                         </div>
                     </div>
-                    
+
                     <div class="timeline-item">
-                        <div class="timeline-marker {% if application.status == 'accepted' or application.status == 'rejected' %}completed{% endif %}">
-                            {% if application.status == 'accepted' or application.status == 'rejected' %}✓{% else %}4{% endif %}
+                        <div class="timeline-marker {% if application.status in ['accepted', 'rejected'] %}completed{% endif %}">
+                            {% if application.status in ['accepted', 'rejected'] %}✓{% else %}4{% endif %}
                         </div>
                         <div class="timeline-content">
                             <h5>Final Decision</h5>
@@ -89,12 +94,29 @@
                         </div>
                     </div>
                 </div>
-                
-                {% if feedback %} <!-- Changed from application.feedback -->
+
+                {% if interviews %}
+                    <div class="card-divider"></div>
+                    <h4>Interview Details</h4>
+                    {% for interview in interviews %}
+                        {% if interview.status == 'scheduled' %}
+                            <div class="feedback-item">
+                                <p><strong>Date & Time:</strong> {{ interview.schedule_date.strftime('%Y-%m-%d %I:%M %p') }}</p>
+                                <p><strong>Location/Platform:</strong> {{ interview.location }}</p>
+                                <p><strong>Scheduled By:</strong> {{ interview.officer_name }}</p>
+                                {% if interview.notes %}
+                                <p><strong>Notes:</strong> {{ interview.notes }}</p>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+
+                {% if feedback %}
                     <div class="card-divider"></div>
                     <h4>Feedback from Admissions Office</h4>
                     <div class="feedback-section">
-                        {% for item in feedback %} <!-- Changed variable name -->
+                        {% for item in feedback %}
                             <div class="feedback-item">
                                 <p class="feedback-date">{{ item.created_at.strftime('%Y-%m-%d %H:%M') }} ({{ item.officer_name }})</p>
                                 <p class="feedback-content">{{ item.content }}</p>
@@ -106,7 +128,6 @@
                 <div class="card-divider"></div>
 
                 <div class="text-center">
-                    <!-- Link to upload documents for this specific application -->
                     <a href="{{ url_for('upload_documents_form', application_id=application.applicationID) }}" class="btn signin-btn">Manage Documents</a>
                 </div>
             </div>
@@ -138,6 +159,7 @@
     margin-right: 15px;
     font-weight: bold;
     border: 2px solid #5533dcb8;
+    flex-shrink: 0;
 }
 
 .timeline-marker.completed {
@@ -147,6 +169,10 @@
 .timeline-content h5 {
     margin-bottom: 5px;
     color: #5533dcb8;
+}
+.timeline-content p {
+    margin-bottom: 0;
+    color: #ccc;
 }
 
 .feedback-item {
@@ -160,6 +186,9 @@
     color: #aaa;
     font-size: 0.9em;
     margin-bottom: 5px;
+}
+.feedback-content {
+    color: white;
 }
 </style>
 {% endblock %}

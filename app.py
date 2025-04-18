@@ -234,7 +234,7 @@ def submit_application():
     if new_app:
         flash('Application submitted successfully! Please upload required documents.', 'success')
         # Redirect to document upload page for the new application
-        return redirect(url_for('upload_documents_form', application_id=new_app['applicationID']))
+        return redirect(url_for('upload_documents_form', application_id=new_app['applicationid']))
     else:
         flash('An error occurred while submitting the application.', 'danger')
         return redirect(url_for('apply_form'))

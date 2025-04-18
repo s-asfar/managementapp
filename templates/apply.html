@@ -1,87 +1,64 @@
 {% extends "_layout.html" %}
-    {% block content %}
-    <div class="container mt-5">
+{% block content %}
+<div class="container mt-5">
+    <div class="col-md-8 offset-md-2">
         <div class="card signin-card">
             <div class="card-header signin-card-header">
-                <h3 class="text-center">Review Application #{{ application.applicationID|string|truncate(8, True, '') }}</h3>
+                <h3 class="text-center">Submit Your Application</h3>
             </div>
             <div class="card-body">
-                <h4>Applicant Information</h4>
-                <p><strong>Name:</strong> {{ application.student_name }}</p>
-                <p><strong>Email:</strong> {{ application.student_email }}</p>
-                <p><strong>Program:</strong> {{ application.program }}</p>
-                <p><strong>Submitted:</strong> {{ application.submission_date.strftime('%Y-%m-%d') }}</p>
-                <p><strong>Current Status:</strong> <span class="badge badge-primary">{{ application.status|capitalize }}</span></p>
-
-                <div class="card-divider"></div>
-
-                <h4>Application Details</h4>
-                <p><strong>Education Level:</strong> {{ application.education_level }}</p>
-                <p><strong>Previous Institution:</strong> {{ application.previous_institution }}</p>
-                <p><strong>GPA:</strong> {{ application.gpa }}</p>
-                <p><strong>Prerequisites Completed:</strong> {{ 'Yes' if application.prerequisites_completed else 'No' }}</p>
-                <p><strong>Personal Statement:</strong></p>
-                <pre>{{ application.personal_statement }}</pre>
-
-                <div class="card-divider"></div>
-
-                <h4>Uploaded Documents</h4>
-                {% if documents %}
-                <ul>
-                    {% for doc in documents %}
-                    <li>
-                        <a href="{{ url_for('uploaded_file', filename=doc.file_path.split('/')[-1]) }}" target="_blank">{{ doc.document_name }}</a> ({{ doc.document_type|capitalize }}) - Uploaded: {{ doc.upload_date.strftime('%Y-%m-%d') }}
-                    </li>
-                    {% endfor %}
-                </ul>
-                {% else %}
-                <p>No documents uploaded.</p>
-                {% endif %}
-
-                <div class="card-divider"></div>
-
-                <h4>Update Status & Add Feedback</h4>
-                <form action="{{ url_for('update_application_status', application_id=application.applicationID) }}" method="POST">
+                <form action="{{ url_for('submit_application') }}" method="POST">
                     <div class="form-group">
-                        <label for="status" class="signin-form-label">New Status:</label>
-                        <select class="form-control signin-form-control" id="status" name="status">
-                            {% for stat in statuses %}
-                            <option value="{{ stat }}" {% if stat == application.status %}selected{% endif %}>{{ stat|capitalize }}</option>
-                            {% endfor %}
+                        <label for="program" class="signin-form-label">Program Applying For:</label>
+                        <select class="form-control signin-form-control custom-select" id="program" name="program" required>
+                            <option value="" disabled selected>Select Program</option>
+                            <option value="Computer Science">Computer Science</option>
+                            <option value="Data Science">Data Science</option>
+                            <option value="Information Technology">Information Technology</option>
+                            <option value="Cybersecurity">Cybersecurity</option>
                         </select>
                     </div>
+
                     <div class="form-group">
-                        <label for="feedback" class="signin-form-label">Feedback/Notes (Optional):</label>
-                        <textarea class="form-control signin-form-control" id="feedback" name="feedback" rows="3" placeholder="Add internal notes or feedback for the applicant..."></textarea>
+                        <label for="education" class="signin-form-label">Highest Level of Education Completed:</label>
+                        <input type="text" class="form-control signin-form-control" id="education" name="education" placeholder="e.g., Bachelor's Degree, High School Diploma" required>
                     </div>
-                    <button type="submit" class="btn btn-block signin-btn">Update Status</button>
+
+                    <div class="form-group">
+                        <label for="institution" class="signin-form-label">Previous Institution:</label>
+                        <input type="text" class="form-control signin-form-control" id="institution" name="institution" placeholder="Name of your last school/university" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="gpa" class="signin-form-label">GPA (on a 4.0 scale):</label>
+                        <input type="number" step="0.01" min="0" max="4" class="form-control signin-form-control" id="gpa" name="gpa" placeholder="e.g., 3.50" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="statement" class="signin-form-label">Personal Statement:</label>
+                        <textarea class="form-control signin-form-control" id="statement" name="statement" rows="5" placeholder="Tell us about yourself and why you want to join this program..." required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="signin-form-label">Prerequisites Completed?</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="prerequisites" id="prereqs_yes" value="yes" required>
+                            <label class="form-check-label" for="prereqs_yes">
+                                Yes
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="prerequisites" id="prereqs_no" value="no">
+                            <label class="form-check-label" for="prereqs_no">
+                                No
+                            </label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-block signin-btn">Submit Application</button>
                 </form>
-
-                <div class="card-divider"></div>
-
-                 <h4>Previous Feedback/Notes</h4>
-                 {% if feedback %}
-                    <div class="feedback-section">
-                        {% for item in feedback %}
-                            <div class="feedback-item">
-                                <p class="feedback-date">{{ item.created_at.strftime('%Y-%m-%d %H:%M') }} ({{ item.officer_name }})</p>
-                                <p class="feedback-content">{{ item.content }}</p>
-                            </div>
-                        {% endfor %}
-                    </div>
-                 {% else %}
-                    <p>No previous feedback recorded.</p>
-                 {% endif %}
-
-                 <div class="mt-4">
-                     <a href="{{ url_for('officer_dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
-                     <!-- Add link to schedule interview if status allows -->
-                     {% if application.status in ['under review', 'submitted', 'more info required'] %}
-                         <!-- <a href="{{ url_for('schedule_interview_form', application_id=application.applicationID) }}" class="btn btn-warning">Schedule Interview</a> -->
-                     {% endif %}
-                 </div>
-
             </div>
         </div>
     </div>
-    {% endblock %}
+</div>
+{% endblock %}
