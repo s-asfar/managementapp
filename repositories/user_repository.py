@@ -166,19 +166,56 @@ def update_user_role(user_id: uuid.UUID, new_role: str) -> bool:
                 return False
 
 def delete_user(user_id: uuid.UUID) -> bool:
-    """Deletes a user from the database. USE WITH CAUTION."""
-    # WARNING: This is a hard delete. Consider soft delete (marking as inactive)
-    # Also, consider implications for related data (applications, feedback, etc.)
-    # You might need to handle foreign key constraints (e.g., set related fields to NULL or cascade delete)
+    """
+    Deletes a user and handles their related data (applications, documents, feedback).
+    Uses a transaction to ensure atomicity.
+    """
     pool = get_pool()
     with pool.connection() as conn:
-        with conn.cursor() as cur:
+        # Start a transaction
+        with conn.transaction():
             try:
-                # Example: If you need to delete related applications first (adjust based on your FK constraints)
-                # cur.execute("DELETE FROM Applications WHERE userID = %s", (user_id,))
-                cur.execute("DELETE FROM Users WHERE userID = %s", (user_id,))
-                return cur.rowcount > 0
+                # Get user role first to determine dependencies
+                with conn.cursor(row_factory=dict_row) as cur:
+                    cur.execute("SELECT role FROM Users WHERE userID = %s", (user_id,))
+                    user_info = cur.fetchone()
+                    if not user_info:
+                        print(f"User {user_id} not found for deletion.")
+                        return False # User doesn't exist
+                    user_role = user_info['role']
+
+                if user_role == 'student':
+                    with conn.cursor(row_factory=dict_row) as cur:
+                        cur.execute("SELECT applicationID FROM Applications WHERE userID = %s", (user_id,))
+                        applications = cur.fetchall()
+                        application_ids = [app['applicationid'] for app in applications]
+
+                    if application_ids:
+                        app_ids_tuple = tuple(application_ids)
+
+                        with conn.cursor() as cur:
+                            cur.execute("DELETE FROM Documents WHERE applicationID = ANY(%s)", (application_ids,))
+                            print(f"Deleted {cur.rowcount} documents for student {user_id}")
+
+                        with conn.cursor() as cur:
+                            cur.execute("DELETE FROM Feedback WHERE applicationID = ANY(%s)", (application_ids,))
+                            print(f"Deleted {cur.rowcount} feedback entries for student {user_id}'s applications")
+
+                        with conn.cursor() as cur:
+                            cur.execute("DELETE FROM Applications WHERE applicationID = ANY(%s)", (application_ids,))
+                            print(f"Deleted {cur.rowcount} applications for student {user_id}")
+
+                elif user_role == 'officer':
+                    with conn.cursor() as cur:
+                        cur.execute("DELETE FROM Feedback WHERE officerID = %s", (user_id,))
+                        print(f"Deleted {cur.rowcount} feedback entries written by officer {user_id}")
+
+                with conn.cursor() as cur:
+                    cur.execute("DELETE FROM Users WHERE userID = %s", (user_id,))
+                    deleted_count = cur.rowcount
+                    print(f"Deleted {deleted_count} user record for {user_id}")
+                    return deleted_count > 0
+
             except Exception as e:
-                print(f"Error deleting user {user_id}: {e}")
-                conn.rollback()
+                print(f"Error during user deletion transaction for {user_id}: {e}")
                 return False

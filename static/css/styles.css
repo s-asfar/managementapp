@@ -424,6 +424,20 @@ form .form-group:last-of-type {
 }
 
 /*---------------------------------------
+  APPLICATION REVIEW & STATUS
+---------------------------------------*/
+/* Style for personal statement pre tag */
+.card-body pre {
+    background-color: #3a3a3a; /* Slightly lighter background */
+    color: #e0e0e0;           /* Lighter text color */
+    padding: 15px;
+    border-radius: 5px;
+    white-space: pre-wrap;    /* Allow text to wrap */
+    word-wrap: break-word;    /* Break long words */
+    border: 1px solid #444;   /* Optional border */
+}
+
+/*---------------------------------------
   DASHBOARD ELEMENTS
 ---------------------------------------*/
 .stat-card {

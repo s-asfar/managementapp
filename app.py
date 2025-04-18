@@ -40,7 +40,7 @@ def require_role(role):
 
 @app.get('/')
 def index():
-    return render_template('index.html', active_page='home')
+    return render_template('index.html', active_page='home', role=session.get('role'))
 
 @app.get('/signin')
 def signin():
@@ -63,12 +63,12 @@ def profile():
         return redirect('/')
     userID = session.get('userID')
     user_data = user_repository.get_user_profile_data(userID)
-    return render_template('user/profile.html', user=user_data, active_page='profile')
+    return render_template('user/profile.html', user=user_data, active_page='profile', role=session.get('role'))
 
 @app.get('/logout')
 def logout():
     flash('You have been successfully signed out.', 'success')
-    del session['userID']
+    session.clear()
     return redirect('/')
 
 @app.get('/editprofile')
@@ -79,7 +79,7 @@ def edit_profile():
 
     userID = session.get('userID')
     user = user_repository.get_user_by_id(userID)
-    return render_template('user/editprofile.html', user=user, active_page='profile')
+    return render_template('user/editprofile.html', user=user, active_page='profile', role=session.get('role'))
 
 @app.post('/signup')
 def signup_account():
@@ -120,11 +120,14 @@ def signin_account():
     email = request.form.get('email').lower()
     password = request.form.get('password')
     user = user_repository.get_user_by_email(email)
+
     if user is None or not bcrypt.check_password_hash(user['hashed_password'], password):
         flash('Invalid email or password.', 'danger')
         return render_template('user/signin.html', active_page='signin')
     else:
+        # Set both userID and role in the session
         session['userID'] = user['userID']
+        session['role'] = user['role'] # Explicitly set role on signin
         flash('You have successfully signed in.', 'success')
         return redirect(url_for('profile'))
 
@@ -143,7 +146,7 @@ def update_profile():
     if not name:
         flash('Name is required.', 'danger')
         user = user_repository.get_user_by_id(userID)
-        return render_template('user/editprofile.html', user=user, active_page='profile')
+        return render_template('user/editprofile.html', user=user, active_page='profile', role=session.get('role'))
 
     age = None
     if age_str:
@@ -152,11 +155,11 @@ def update_profile():
             if age <= 0:
                 flash('Please enter a valid age.', 'danger')
                 user = user_repository.get_user_by_id(userID)
-                return render_template('user/editprofile.html', user=user, active_page='profile')
+                return render_template('user/editprofile.html', user=user, active_page='profile', role=session.get('role'))
         except ValueError:
             flash('Age must be a number.', 'danger')
             user = user_repository.get_user_by_id(userID)
-            return render_template('user/editprofile.html', user=user, active_page='profile')
+            return render_template('user/editprofile.html', user=user, active_page='profile', role=session.get('role'))
 
     updated_user = user_repository.update_user(userID, name, phone, address, age)
 
@@ -174,7 +177,7 @@ def apply_form():
         return restrict
 
     userID = session.get('userID')
-    return render_template('application/apply.html', active_page='apply')
+    return render_template('application/apply.html', active_page='apply', role=session.get('role'))
 
 @app.post('/apply')
 def submit_application():
@@ -244,7 +247,8 @@ def application_status():
                            application=application,
                            feedback=feedback,
                            interviews=interviews,
-                           active_page='application')
+                           active_page='application',
+                           role=session.get('role'))
 
 @app.get('/upload-documents/<uuid:application_id>')
 def upload_documents_form(application_id):
@@ -262,7 +266,8 @@ def upload_documents_form(application_id):
     return render_template('application/upload_documents.html',
                            application=application,
                            documents=documents,
-                           active_page='documents')
+                           active_page='documents',
+                           role=session.get('role'))
 
 @app.post('/upload-documents/<uuid:application_id>')
 def upload_documents(application_id):
@@ -415,12 +420,11 @@ def officer_dashboard():
 
     officer_id = session['userID']
     applications = application_repository.get_all_applications()
-    scheduled_interviews = interview_repository.get_scheduled_interviews_for_officer(officer_id)
 
     return render_template('admin/officer_dashboard.html',
                            applications=applications,
-                           scheduled_interviews=scheduled_interviews,
-                           active_page='officer_dashboard')
+                           active_page='officer_dashboard',
+                           role=session.get('role'))
 
 @app.get('/review-application/<uuid:application_id>')
 def review_application_form(application_id):
@@ -443,7 +447,8 @@ def review_application_form(application_id):
                            documents=documents,
                            feedback=feedback,
                            statuses=statuses,
-                           active_page='officer_dashboard')
+                           active_page='officer_dashboard',
+                           role=session.get('role'))
 
 @app.post('/update-application-status/<uuid:application_id>')
 def update_application_status(application_id):
@@ -474,94 +479,6 @@ def update_application_status(application_id):
 
     return redirect(url_for('review_application_form', application_id=application_id))
 
-@app.get('/schedule-interview/<uuid:application_id>')
-def schedule_interview_form(application_id):
-    restrict = require_role('officer')
-    if restrict:
-        return restrict
-
-    application = application_repository.get_application_by_id(application_id)
-    if not application:
-        flash('Application not found.', 'danger')
-        return redirect(url_for('officer_dashboard'))
-
-    return render_template('application/interview/schedule_interview.html',
-                           application=application,
-                           active_page='officer_dashboard')
-
-@app.post('/schedule-interview/<uuid:application_id>')
-def schedule_interview_post(application_id):
-    restrict = require_role('officer')
-    if restrict:
-        return restrict
-
-    officer_id = session['userID']
-    schedule_date_str = request.form.get('schedule_date')
-    location = request.form.get('location')
-    notes = request.form.get('notes')
-
-    if not schedule_date_str or not location:
-        flash('Interview date/time and location are required.', 'danger')
-        return redirect(url_for('schedule_interview_form', application_id=application_id))
-
-    try:
-        schedule_date = datetime.fromisoformat(schedule_date_str)
-    except ValueError:
-        flash('Invalid date/time format.', 'danger')
-        return redirect(url_for('schedule_interview_form', application_id=application_id))
-
-    new_interview = interview_repository.schedule_interview(
-        application_id, officer_id, schedule_date, location, notes
-    )
-
-    if new_interview:
-        flash('Interview scheduled successfully! Application status updated.', 'success')
-        return redirect(url_for('review_application_form', application_id=application_id))
-    else:
-        flash('Failed to schedule interview.', 'danger')
-        return redirect(url_for('schedule_interview_form', application_id=application_id))
-
-@app.route('/view-interview/<uuid:interview_id>', methods=['GET', 'POST'])
-def view_interview(interview_id):
-    restrict = require_role('officer')
-    if restrict:
-        return restrict
-
-    officer_id = session['userID']
-    interview = interview_repository.get_interview_by_id(interview_id)
-
-    if not interview or interview['officerid'] != officer_id:
-        flash('Interview not found or you do not have permission to view it.', 'danger')
-        return redirect(url_for('officer_dashboard'))
-
-    application = application_repository.get_application_by_id(interview['applicationid'])
-    student = user_repository.get_user_by_id(application['userid']) if application else None
-
-    if request.method == 'POST':
-        new_status = request.form.get('status')
-        notes = request.form.get('notes', interview.get('notes'))
-
-        if not new_status or new_status not in ['scheduled', 'completed', 'cancelled']:
-            flash('Invalid status selected.', 'danger')
-        else:
-            updated = interview_repository.update_interview_status(interview_id, new_status, notes)
-            if updated:
-                flash(f'Interview status updated to {new_status}.', 'success')
-                interview = interview_repository.get_interview_by_id(interview_id)
-            else:
-                flash('Failed to update interview status.', 'danger')
-        return render_template('application/interview/view_interview.html',
-                               interview=interview,
-                               application=application,
-                               student=student,
-                               active_page='officer_dashboard')
-
-    return render_template('application/interview/view_interview.html',
-                           interview=interview,
-                           application=application,
-                           student=student,
-                           active_page='officer_dashboard')
-
 @app.get('/admin-dashboard')
 def admin_dashboard():
     restrict = require_role('admin')
@@ -574,7 +491,8 @@ def admin_dashboard():
     return render_template('admin/admin_dashboard.html',
                            stats=stats,
                            recent_apps=recent_apps,
-                           active_page='admin_dashboard')
+                           active_page='admin_dashboard',
+                           role=session.get('role'))
 
 @app.get('/generate-report')
 def generate_report_form():
@@ -582,7 +500,7 @@ def generate_report_form():
     if restrict:
         return restrict
 
-    return render_template('report/generate_report.html', active_page='admin_dashboard')
+    return render_template('report/generate_report.html', active_page='admin_dashboard', role=session.get('role'))
 
 @app.post('/generate-report')
 def generate_report():
@@ -623,8 +541,8 @@ def generate_report():
                            start_date=start_date_str,
                            end_date=end_date_str,
                            report_type=report_type,
-                           active_page='admin_dashboard')
-
+                           active_page='admin_dashboard',
+                           role=session.get('role'))
 
 @app.get('/admin/users')
 def admin_list_users():
@@ -633,7 +551,7 @@ def admin_list_users():
         return restrict
 
     users = user_repository.get_all_users()
-    return render_template('admin/admin_users.html', users=users, active_page='admin_dashboard')
+    return render_template('admin/admin_users.html', users=users, active_page='admin_dashboard', role=session.get('role'))
 
 @app.route('/admin/user/<uuid:user_id>/edit', methods=['GET', 'POST'])
 def admin_edit_user(user_id):
@@ -665,13 +583,15 @@ def admin_edit_user(user_id):
         return render_template('admin/admin_edit_user.html',
                                user=user_to_edit,
                                allowed_roles=allowed_roles,
-                               active_page='admin_dashboard')
+                               active_page='admin_dashboard',
+                               role=session.get('role'))
 
     allowed_roles = ['student', 'officer', 'admin']
     return render_template('admin/admin_edit_user.html',
                            user=user_to_edit,
                            allowed_roles=allowed_roles,
-                           active_page='admin_dashboard')
+                           active_page='admin_dashboard',
+                           role=session.get('role'))
 
 @app.post('/admin/user/<uuid:user_id>/delete')
 def admin_delete_user(user_id):

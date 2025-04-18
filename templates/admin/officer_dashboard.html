@@ -10,7 +10,7 @@
                 <div class="card-body">
                     <div class="nav flex-column">
                         <a class="nav-link active" href="{{ url_for('officer_dashboard') }}">Applications Dashboard</a>
-                        <a class="nav-link" href="#scheduled-interviews">Scheduled Interviews</a>
+                        {# <a class="nav-link" href="#scheduled-interviews">Scheduled Interviews</a> #}
                     </div>
                 </div>
             </div>
@@ -117,41 +117,41 @@
                 </div>
             </div>
             
-            <div class="card signin-card mt-4" id="scheduled-interviews">
-                <div class="card-header signin-card-header">
-                    <h3>Your Scheduled Interviews</h3>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-dark table-hover table-sm">
-                            <thead>
-                                <tr>
-                                    <th>Student</th>
-                                    <th>Program</th>
-                                    <th>Date & Time</th>
-                                    <th>Location/Platform</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for interview in scheduled_interviews %}
-                                <tr>
-                                    <td>{{ interview.student_name }}</td>
-                                    <td>{{ interview.program }}</td>
-                                    <td>{{ interview.schedule_date.strftime('%Y-%m-%d %I:%M %p') }}</td>
-                                    <td>{{ interview.location }}</td>
-                                    <td>
-                                        <a href="{{ url_for('view_interview', interview_id=interview.interviewID) }}" class="btn btn-sm btn-secondary">View/Update</a>
-                                    </td>
-                                </tr>
-                                {% else %}
-                                <tr><td colspan="5">You have no upcoming interviews scheduled.</td></tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
+            {# <div class="card signin-card mt-4" id="scheduled-interviews">
+            <div class="card-header signin-card-header">
+                <h3>Your Scheduled Interviews</h3>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover table-sm">
+                        <thead>
+                            <tr>
+                                <th>Student</th>
+                                <th>Program</th>
+                                <th>Date & Time</th>
+                                <th>Location/Platform</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for interview in scheduled_interviews %}
+                            <tr>
+                                <td>{{ interview.student_name }}</td>
+                                <td>{{ interview.program }}</td>
+                                <td>{{ interview.schedule_date.strftime('%Y-%m-%d %I:%M %p') }}</td>
+                                <td>{{ interview.location }}</td>
+                                <td>
+                                    <a href="{{ url_for('view_interview', interview_id=interview.interviewID) }}" class="btn btn-sm btn-secondary">View/Update</a>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr><td colspan="5">You have no upcoming interviews scheduled.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
             </div>
+        </div> #}
             
             <div class="card signin-card mt-4">
                 <div class="card-header signin-card-header">

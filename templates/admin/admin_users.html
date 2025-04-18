@@ -25,8 +25,8 @@
                             <td>{{ user.role|capitalize }}</td>
                             <td>{{ user.date_created.strftime('%Y-%m-%d') if user.date_created else 'N/A' }}</td>
                             <td>
+                                {% if user.userid != session['userID'] %}
                                 <a href="{{ url_for('admin_edit_user', user_id=user.userid) }}" class="btn btn-sm btn-warning">Edit Role</a>
-                                {% if user.userid != session['userID'] %} {# Prevent showing delete for self #}
                                 <form action="{{ url_for('admin_delete_user', user_id=user.userid) }}" method="POST" style="display:inline;" onsubmit="return confirm('WARNING: Deleting user {{ user.email }} is irreversible and may affect related data. Are you absolutely sure?');">
                                     <button type="submit" class="btn btn-sm btn-danger">Delete</button>
                                 </form>

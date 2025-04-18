@@ -95,34 +95,8 @@
                     </div>
                 </div>
 
-                {% if interviews %}
-                    <div class="card-divider"></div>
-                    <h4>Interview Details</h4>
-                    {% for interview in interviews %}
-                        {% if interview.status == 'scheduled' %}
-                            <div class="feedback-item">
-                                <p><strong>Date & Time:</strong> {{ interview.schedule_date.strftime('%Y-%m-%d %I:%M %p') }}</p>
-                                <p><strong>Location/Platform:</strong> {{ interview.location }}</p>
-                                <p><strong>Scheduled By:</strong> {{ interview.officer_name }}</p>
-                                {% if interview.notes %}
-                                <p><strong>Notes:</strong> {{ interview.notes }}</p>
-                                {% endif %}
-                            </div>
-                        {% endif %}
-                    {% endfor %}
-                {% endif %}
-
                 {% if feedback %}
-                    <div class="card-divider"></div>
-                    <h4>Feedback from Admissions Office</h4>
-                    <div class="feedback-section">
-                        {% for item in feedback %}
-                            <div class="feedback-item">
-                                <p class="feedback-date">{{ item.created_at.strftime('%Y-%m-%d %H:%M') }} ({{ item.officer_name }})</p>
-                                <p class="feedback-content">{{ item.content }}</p>
-                            </div>
-                        {% endfor %}
-                    </div>
+<!-- ... Feedback section ... -->
                 {% endif %}
 
                 <div class="card-divider"></div>
