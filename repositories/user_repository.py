@@ -2,7 +2,7 @@ import uuid
 from typing import Any, List
 from repositories.db import get_pool
 from psycopg.rows import dict_row
-from flask_bcrypt import Bcrypt # Add this import if not already present
+from flask_bcrypt import Bcrypt 
 
 
 def does_email_exist(email: str) -> bool:
@@ -78,7 +78,7 @@ def get_user_by_id(userID: uuid.UUID) -> dict[str, Any] | None:
             user = cur.fetchone()
             return user
 
-def update_user(userID: uuid.UUID, name: str, phone: str = None, address: str = None, age: int = None) -> dict[str, Any] | None: # Add age parameter
+def update_user(userID: uuid.UUID, name: str, phone: str = None, address: str = None, age: int = None) -> dict[str, Any] | None: 
     pool = get_pool()
     with pool.connection() as conn:
         with conn.cursor(row_factory=dict_row) as cur:
@@ -87,7 +87,7 @@ def update_user(userID: uuid.UUID, name: str, phone: str = None, address: str = 
                 SET name = %s, phone = %s, address = %s, age = %s -- Add age to SET
                 WHERE userID = %s
                 RETURNING userID, email, name, role, phone, address, age, date_created -- Add age to RETURNING
-            ''', (name, phone, address, age, userID)) # Add age to tuple
+            ''', (name, phone, address, age, userID)) 
             updated_user = cur.fetchone()
             return updated_user
 
@@ -145,7 +145,7 @@ def get_all_users() -> List[dict[str, Any]]:
 def update_user_role(user_id: uuid.UUID, new_role: str) -> bool:
     """Updates the role of a specific user."""
     pool = get_pool()
-    # Basic validation for allowed roles
+    
     if new_role not in ['student', 'officer', 'admin']:
         print(f"Error: Invalid role '{new_role}' provided for update.")
         return False
@@ -158,7 +158,7 @@ def update_user_role(user_id: uuid.UUID, new_role: str) -> bool:
                     SET role = %s
                     WHERE userID = %s
                 ''', (new_role, user_id))
-                # Check if the update affected any row
+                
                 return cur.rowcount > 0
             except Exception as e:
                 print(f"Error updating user role: {e}")
@@ -172,16 +172,16 @@ def delete_user(user_id: uuid.UUID) -> bool:
     """
     pool = get_pool()
     with pool.connection() as conn:
-        # Start a transaction
+        
         with conn.transaction():
             try:
-                # Get user role first to determine dependencies
+                
                 with conn.cursor(row_factory=dict_row) as cur:
                     cur.execute("SELECT role FROM Users WHERE userID = %s", (user_id,))
                     user_info = cur.fetchone()
                     if not user_info:
                         print(f"User {user_id} not found for deletion.")
-                        return False # User doesn't exist
+                        return False 
                     user_role = user_info['role']
 
                 if user_role == 'student':

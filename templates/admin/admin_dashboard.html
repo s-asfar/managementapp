@@ -9,7 +9,6 @@
                 </div>
                 <div class="card-body">
                     <div class="nav flex-column">
-                        <a class="nav-link active" href="{{ url_for('admin_dashboard') }}">Dashboard</a>
                         <a class="nav-link" href="{{ url_for('generate_report_form') }}">Generate Reports</a>
                         <a class="nav-link" href="{{ url_for('admin_list_users') }}">User Management</a>
                     </div>
@@ -89,7 +88,7 @@
                                     <td><span class="badge badge-primary">{{ app.status|capitalize }}</span></td>
                                     <td>{{ app.submission_date.strftime('%Y-%m-%d') }}</td>
                                     <td>
-                                        <a href="{{ url_for('review_application_form', application_id=app.applicationID) }}" class="btn btn-sm btn-info">View</a>
+                                        <a href="{{ url_for('review_application_form', application_id=app.applicationid) }}" class="btn btn-sm btn-info">View</a>
                                     </td>
                                 </tr>
                                 {% else %}

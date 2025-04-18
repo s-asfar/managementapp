@@ -32,7 +32,7 @@
                             <td><span class="badge badge-primary">{{ app.status|capitalize }}</span></td>
                             <td>{{ app.submission_date.strftime('%Y-%m-%d') }}</td>
                             <td>
-                                <a href="{{ url_for('review_application_form', application_id=app.applicationID) }}" class="btn btn-sm btn-info">View</a>
+                                <a href="{{ url_for('review_application_form', application_id=app.applicationid) }}" class="btn btn-sm btn-info">View</a>
                             </td>
                         </tr>
                         {% else %}

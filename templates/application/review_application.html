@@ -74,7 +74,7 @@
              {% endif %}
 
              <div class="mt-4">
-                 <a href="{{ url_for('officer_dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
+                 <a href="{{ url_for('admin_dashboard') if role == 'admin' else url_for('officer_dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
                  {# {% if application.status in ['under review', 'submitted', 'more info required'] %}
                      <a href="{{ url_for('schedule_interview_form', application_id=application.applicationid) }}" class="btn btn-warning">Schedule Interview</a>
                  {% endif %} #}

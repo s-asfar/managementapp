@@ -125,9 +125,9 @@ def signin_account():
         flash('Invalid email or password.', 'danger')
         return render_template('user/signin.html', active_page='signin')
     else:
-        # Set both userID and role in the session
+        
         session['userID'] = user['userID']
-        session['role'] = user['role'] # Explicitly set role on signin
+        session['role'] = user['role'] 
         flash('You have successfully signed in.', 'success')
         return redirect(url_for('profile'))
 
@@ -334,7 +334,7 @@ def delete_document(document_id):
 
     if not doc:
         flash('Document not found in database.', 'danger')
-        return redirect(url_for('profile')) # Redirect to profile if doc not found
+        return redirect(url_for('profile')) 
 
     application_id_for_redirect = doc.get('applicationid')
     if not application_id_for_redirect:
@@ -428,14 +428,31 @@ def officer_dashboard():
 
 @app.get('/review-application/<uuid:application_id>')
 def review_application_form(application_id):
-    restrict = require_role('officer')
-    if restrict:
-        return restrict
+    
+    if 'userID' not in session:
+        flash('You must be signed in to access this page.', 'danger')
+        return redirect(url_for('signin'))
 
+    user = user_repository.get_user_by_id(session['userID'])
+    
+    if not user or user.get('role') not in ['officer', 'admin']:
+        flash('You do not have permission to access this page.', 'danger')
+        
+        if user and user.get('role') == 'student':
+             return redirect(url_for('application_status'))
+        else:
+             return redirect(url_for('index'))
+
+    
     application = application_repository.get_application_by_id(application_id)
     if not application:
         flash('Application not found.', 'danger')
-        return redirect(url_for('officer_dashboard'))
+        
+        if user.get('role') == 'admin':
+            return redirect(url_for('admin_dashboard'))
+        else: 
+            return redirect(url_for('officer_dashboard'))
+
 
     documents = document_repository.get_documents_by_application(application_id)
     feedback = application_repository.get_feedback_for_application(application_id)
@@ -447,18 +464,29 @@ def review_application_form(application_id):
                            documents=documents,
                            feedback=feedback,
                            statuses=statuses,
-                           active_page='officer_dashboard',
+                           active_page='officer_dashboard' if user.get('role') == 'officer' else 'admin_dashboard', 
                            role=session.get('role'))
 
 @app.post('/update-application-status/<uuid:application_id>')
 def update_application_status(application_id):
-    restrict = require_role('officer')
-    if restrict:
-        return restrict
+    
+    if 'userID' not in session:
+        flash('You must be signed in to perform this action.', 'danger')
+        return redirect(url_for('signin'))
 
+    user = user_repository.get_user_by_id(session['userID'])
+    if not user or user.get('role') not in ['officer', 'admin']:
+        flash('You do not have permission to perform this action.', 'danger')
+        if user and user.get('role') == 'student':
+             return redirect(url_for('application_status'))
+        else:
+             return redirect(url_for('index'))
+
+    
     new_status = request.form.get('status')
     feedback_content = request.form.get('feedback')
-    officer_id = session['userID']
+    
+    current_user_id = session['userID']
 
     if not new_status:
         flash('Status is required.', 'danger')
@@ -468,7 +496,8 @@ def update_application_status(application_id):
 
     feedback_added = None
     if feedback_content:
-        feedback_added = application_repository.add_feedback(application_id, officer_id, feedback_content)
+        
+        feedback_added = application_repository.add_feedback(application_id, current_user_id, feedback_content)
 
     if status_updated:
         flash('Application status updated successfully!', 'success')
