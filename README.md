@@ -21,7 +21,7 @@ python -m venv .venv
 # source .venv/bin/activate    # macOS/Linux
 pip install -r requirements.txt
 
-create a postgresql db
+create postgresql db, for example I used datagrip to make one.
 
 create .env file
 
