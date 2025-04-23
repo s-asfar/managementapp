@@ -29,3 +29,7 @@ create .env file
 DATABASE_URL = "postgresql://postgres:<password>@localhost:5432/<database_name>"
 
 **RUN THE SQL IN THE SCHEMA SQL FILE IN YOUR CREATED DB
+
+Run the app: 
+
+flask run OR flask run --debug
